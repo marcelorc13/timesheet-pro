@@ -9,7 +9,9 @@ import (
 func (r Router) APIRoutes() {
 	apiRouter := r.Router.Group("/api/v1")
 	apiRouter.GET("/", api.HomeHandler)
+}
 
+func (r Router) ViewsRoutes() {
 	viewsRouter := r.Router.Group("/")
 	viewsRouter.GET("/", views.HomeHandler)
 }

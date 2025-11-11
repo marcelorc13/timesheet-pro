@@ -17,6 +17,7 @@ func main() {
 	ctx := context.Background()
 
 	db := repository.NewPool(ctx, connString)
+
 	if err := db.Ping(ctx); err != nil {
 		panic(err)
 	}
@@ -26,6 +27,7 @@ func main() {
 	router := server.NewRouter(r)
 
 	router.APIRoutes()
+	router.ViewsRoutes()
 
 	router.Start()
 }
