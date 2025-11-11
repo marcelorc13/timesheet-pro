@@ -8,6 +8,7 @@ run:
 setup:
 	go install -ldflags="-s -w" -tags="no_libsql no_mssql no_vertica no_clickhouse no_mysql no_sqlite3 no_ydb" github.com/pressly/goose/v3/cmd/goose@latest
 	go get -tool github.com/a-h/templ/cmd/templ@latest
+	go install github.com/swaggo/swag/cmd/swag@latest
 
 .PHONY: tidy
 tidy:
