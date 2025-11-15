@@ -1,7 +1,7 @@
 .PHONY: run
 run:
 	@go tool templ generate
-	@go run cmd/main.go
+	@go run cmd/api/main.go
 
 
 .PHONY: setup

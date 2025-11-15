@@ -7,8 +7,6 @@ import (
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
-func (r Router) UserRoutes(uh api.UserHandler) {
-}
 
 func (r Router) APIRoutes(uh api.UserHandler) {
    	docs.SwaggerInfo.BasePath = "/api/v1"
@@ -31,4 +29,7 @@ func (r Router) APIRoutes(uh api.UserHandler) {
 func (r Router) ViewsRoutes() {
 	viewsRouter := r.Router.Group("/")
 	viewsRouter.GET("/", views.HomeHandler)
+	
+	viewsRouter.GET("/signup", views.SignupHandler)
+	
 }

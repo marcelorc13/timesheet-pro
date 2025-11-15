@@ -78,7 +78,7 @@ func (h UserHandler) DeleteUsuario(c *gin.Context) {
 func (h UserHandler) CreateUsuario(c *gin.Context) {
 	var usuario domain.Usuario
 
-	err := c.BindJSON(&usuario)
+	err := c.ShouldBind (&usuario)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, domain.HttpResponse{Status: http.StatusBadRequest, Message: err.Error()})
 		return
