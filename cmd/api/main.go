@@ -8,6 +8,8 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/marcelorc13/timesheet-pro/internal/repository"
 	"github.com/marcelorc13/timesheet-pro/internal/server"
+	"github.com/marcelorc13/timesheet-pro/internal/server/api"
+	service "github.com/marcelorc13/timesheet-pro/internal/services"
 )
 
 func main() {
@@ -26,7 +28,11 @@ func main() {
 
 	router := server.NewRouter(r)
 
-	router.APIRoutes()
+	ur := repository.NewUserRepository(db)
+	us := service.NewUserService(*ur)
+	uh := api.NewUserHandler(*us)
+
+	router.APIRoutes(*uh)
 	router.ViewsRoutes()
 
 	router.Start()
