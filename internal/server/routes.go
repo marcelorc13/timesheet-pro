@@ -31,5 +31,6 @@ func (r Router) ViewsRoutes() {
 	viewsRouter.GET("/", views.HomeHandler)
 	
 	viewsRouter.GET("/signup", views.SignupHandler)
+	viewsRouter.GET("/login", views.LoginHandler)
 	
 }
