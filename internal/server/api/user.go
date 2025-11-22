@@ -21,8 +21,8 @@ func NewUserHandler(us service.UserService) *UserHandler {
 	return &UserHandler{us}
 }
 
-func (h UserHandler) GetUsuarios(c *gin.Context) {
-	res, err := h.service.GetUsuarios(c.Request.Context())
+func (h UserHandler) List(c *gin.Context) {
+	res, err := h.service.List(c.Request.Context())
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err)
@@ -35,10 +35,10 @@ func (h UserHandler) GetUsuarios(c *gin.Context) {
 	c.JSON(http.StatusOK, domain.HttpResponse{Status: http.StatusOK, Message: "Todos os usuarios do banco", Data: res})
 }
 
-func (h UserHandler) GetUsuario(c *gin.Context) {
+func (h UserHandler) GetByID(c *gin.Context) {
 	id := c.Param("id")
 
-	res, err := h.service.GetUsuario(c.Request.Context(), id)
+	res, err := h.service.GetByID(c.Request.Context(), id)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, domain.HttpResponse{Status: http.StatusBadRequest, Message: err.Error()})
@@ -53,7 +53,7 @@ func (h UserHandler) GetUsuario(c *gin.Context) {
 	c.JSON(http.StatusOK, domain.HttpResponse{Status: http.StatusOK, Message: fmt.Sprintf("Usuário de id %s encontrado", id), Data: res})
 }
 
-func (h UserHandler) DeleteUsuario(c *gin.Context) {
+func (h UserHandler) Delete(c *gin.Context) {
 	id := c.Param("id")
 
 	convertId, err := strconv.Atoi(id)
@@ -62,7 +62,7 @@ func (h UserHandler) DeleteUsuario(c *gin.Context) {
 		c.JSON(400, domain.HttpResponse{Status: http.StatusBadGateway, Message: "Erro ao converter número de id para inteiro"})
 	}
 
-	err = h.service.DeleteUsuario(c.Request.Context(), convertId)
+	err = h.service.Delete(c.Request.Context(), convertId)
 
 	if err != nil {
 		if strings.Contains(err.Error(), "usuário não encontrado") {
@@ -76,8 +76,8 @@ func (h UserHandler) DeleteUsuario(c *gin.Context) {
 	c.JSON(http.StatusOK, domain.HttpResponse{Status: http.StatusOK, Message: "Usuário deletado com sucesso"})
 }
 
-func (h UserHandler) CreateUsuario(c *gin.Context) {
-	var usuario domain.Usuario
+func (h UserHandler) Create(c *gin.Context) {
+	var usuario domain.User
 
 	if err := c.ShouldBind(&usuario); err != nil {
 		c.Status(http.StatusBadRequest)
@@ -85,7 +85,7 @@ func (h UserHandler) CreateUsuario(c *gin.Context) {
 		return
 	}
 
-	err := h.service.CreateUsuario(c.Request.Context(), usuario)
+	err := h.service.Create(c.Request.Context(), usuario)
 	if err != nil {
 		c.Status(http.StatusBadRequest)
 		utils.Render(c.Request.Context(), c.Writer, components.Response(err.Error(), true))
@@ -96,7 +96,7 @@ func (h UserHandler) CreateUsuario(c *gin.Context) {
 	utils.Render(c.Request.Context(), c.Writer, components.Response("Usuário criado com sucesso! realize o login", false))
 }
 func (h UserHandler) Login(c *gin.Context) {
-	var usuario domain.LoginUsuario
+	var usuario domain.LoginUser
 
 	if err := c.ShouldBind(&usuario); err != nil {
 		c.Status(400)

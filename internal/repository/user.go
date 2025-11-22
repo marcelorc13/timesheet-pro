@@ -17,16 +17,16 @@ func NewUserRepository(db *pgxpool.Pool) *UserRepository {
 	return &UserRepository{db}
 }
 
-func (r *UserRepository) GetUsuarios(ctx context.Context) (domain.DBResponse, error) {
+func (r *UserRepository) List(ctx context.Context) (domain.DBResponse, error) {
 	results, err := r.DB.Query(ctx, "SELECT id, name, email, password FROM users")
 	if err != nil {
 		return domain.DBResponse{Message: "Ocorreu um erro na query"}, err
 	}
 
-	res := []domain.Usuario{}
+	res := []domain.User{}
 
 	for results.Next() {
-		var user domain.Usuario
+		var user domain.User
 
 		err = results.Scan(&user.ID, &user.Name, &user.Email, &user.Password)
 		if err != nil {
@@ -43,8 +43,8 @@ func (r *UserRepository) GetUsuarios(ctx context.Context) (domain.DBResponse, er
 	return domain.DBResponse{Success: true, Data: res}, nil
 }
 
-func (r *UserRepository) GetUsuario(ctx context.Context, id string) (domain.DBResponse, error) {
-	var user domain.Usuario
+func (r *UserRepository) GetByID(ctx context.Context, id string) (domain.DBResponse, error) {
+	var user domain.User
 
 	err := r.DB.QueryRow(ctx, "SELECT id, name, email, password FROM users WHERE id = $1", id).
 		Scan(&user.ID, &user.Name, &user.Email, &user.Password)
@@ -57,7 +57,7 @@ func (r *UserRepository) GetUsuario(ctx context.Context, id string) (domain.DBRe
 	return domain.DBResponse{Success: true, Data: user}, nil
 }
 
-func (r *UserRepository) DeleteUsuario(ctx context.Context, id int) (domain.DBResponse, error) {
+func (r *UserRepository) Delete(ctx context.Context, id int) (domain.DBResponse, error) {
 	res, err := r.DB.Exec(ctx, "DELETE FROM usuarios WHERE id = $1", id)
 	if err != nil {
 		return domain.DBResponse{Message: "ocorreu um erro na query"}, err
@@ -71,7 +71,7 @@ func (r *UserRepository) DeleteUsuario(ctx context.Context, id int) (domain.DBRe
 	return domain.DBResponse{Success: true}, nil
 }
 
-func (r *UserRepository) CreateUsuario(ctx context.Context, u domain.Usuario) (domain.DBResponse, error) {
+func (r *UserRepository) Create(ctx context.Context, u domain.User) (domain.DBResponse, error) {
 	passwordBytes, err := bcrypt.GenerateFromPassword([]byte(u.Password), 14)
 	if err != nil {
 		return domain.DBResponse{Message: "erro ao hashear password"}, nil
@@ -93,8 +93,8 @@ func (r *UserRepository) CreateUsuario(ctx context.Context, u domain.Usuario) (d
 	return domain.DBResponse{Success: true}, nil
 }
 
-func (r *UserRepository) Login(ctx context.Context, u domain.LoginUsuario) (domain.DBResponse, error) {
-	var usuario domain.LoginUsuario
+func (r *UserRepository) Login(ctx context.Context, u domain.LoginUser) (domain.DBResponse, error) {
+	var usuario domain.LoginUser
 	err := r.DB.QueryRow(ctx, "SELECT id, email, password FROM users WHERE email = $1", u.Email).
 		Scan(&usuario.ID, &usuario.Email, &usuario.Password)
 

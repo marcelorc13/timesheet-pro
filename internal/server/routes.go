@@ -16,10 +16,10 @@ func (r Router) APIRoutes(uh api.UserHandler) {
 
 	userRoutes := apiRouter.Group("users/")
 
-	userRoutes.GET("/", uh.GetUsuarios)
-	userRoutes.GET("/:id", uh.GetUsuario)
-	userRoutes.DELETE("/:id", uh.DeleteUsuario)
-	userRoutes.POST("/", uh.CreateUsuario)
+	userRoutes.GET("/", uh.List)
+	userRoutes.GET("/:id", uh.GetByID)
+	userRoutes.DELETE("/:id", uh.Delete)
+	userRoutes.POST("/", uh.Create)
 	userRoutes.POST("/login", uh.Login)
 
 	r.Router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
