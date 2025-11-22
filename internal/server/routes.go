@@ -28,9 +28,11 @@ func (r Router) APIRoutes(uh api.UserHandler) {
 
 func (r Router) ViewsRoutes() {
 	viewsRouter := r.Router.Group("/")
-	viewsRouter.GET("/", views.HomeHandler)
 
 	viewsRouter.GET("/signup", views.SignupHandler)
 	viewsRouter.GET("/login", views.LoginHandler)
 
+	authRoutes := viewsRouter.Group("/")
+	authRoutes.Use(AuthMiddleware())
+	authRoutes.GET("/", views.HomeHandler)
 }
