@@ -6,6 +6,6 @@ import (
 	"github.com/marcelorc13/timesheet-pro/internal/utils"
 )
 
-func HomeHandler(c *gin.Context){
+func HomeHandler(c *gin.Context) {
 	utils.Render(c.Request.Context(), c.Writer, pages.HomePage())
-} 
+}

@@ -1,0 +1,27 @@
+package components
+
+templ Response(message string, isError bool) {
+	if isError {
+		<div class="rounded-md bg-red-50 p-4">
+			<div class="flex">
+				<div class="flex-shrink-0">
+					<span class="material-symbols-outlined text-red-400">error</span>
+				</div>
+				<div class="ml-3">
+					<p class="text-sm font-medium text-red-800">{ message }</p>
+				</div>
+			</div>
+		</div>
+	} else {
+		<div class="rounded-md bg-green-50 p-4">
+			<div class="flex">
+				<div class="flex-shrink-0">
+					<span class="material-symbols-outlined text-green-400">check_circle</span>
+				</div>
+				<div class="ml-3">
+					<p class="text-sm font-medium text-green-800">{ message }</p>
+				</div>
+			</div>
+		</div>
+	}
+}

@@ -43,7 +43,7 @@ func (r *UserRepository) GetUsuarios(ctx context.Context) (domain.DBResponse, er
 	return domain.DBResponse{Success: true, Data: res}, nil
 }
 
-func (r *UserRepository) GetUsuario(ctx context.Context,id string) (domain.DBResponse, error) {
+func (r *UserRepository) GetUsuario(ctx context.Context, id string) (domain.DBResponse, error) {
 	var user domain.Usuario
 
 	err := r.DB.QueryRow(ctx, "SELECT id, name, email, password FROM users WHERE id = $1", id).

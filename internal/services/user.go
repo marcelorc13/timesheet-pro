@@ -58,7 +58,7 @@ func (us UserService) GetUsuario(ctx context.Context, id string) (*domain.Usuari
 	return &usuario, nil
 }
 
-func (us UserService) DeleteUsuario(ctx context.Context,id int) error {
+func (us UserService) DeleteUsuario(ctx context.Context, id int) error {
 	res, err := us.repository.DeleteUsuario(ctx, id)
 
 	if err != nil {
@@ -66,13 +66,13 @@ func (us UserService) DeleteUsuario(ctx context.Context,id int) error {
 	}
 
 	if !res.Success {
-		return fmt.Errorf("%s",res.Message)
+		return fmt.Errorf("%s", res.Message)
 	}
 
 	return nil
 }
 
-func (us UserService) CreateUsuario(ctx context.Context,u domain.Usuario) error {
+func (us UserService) CreateUsuario(ctx context.Context, u domain.Usuario) error {
 	validate := validator.New()
 	u.ID = uuid.New()
 	err := validate.Struct(u)
@@ -87,13 +87,13 @@ func (us UserService) CreateUsuario(ctx context.Context,u domain.Usuario) error 
 	}
 
 	if !res.Success {
-		return fmt.Errorf("%s",res.Message)
+		return fmt.Errorf("%s", res.Message)
 	}
 
 	return nil
 }
 
-func (us UserService) Login(ctx context.Context ,u domain.LoginUsuario) (*domain.LoginUsuario, error) {
+func (us UserService) Login(ctx context.Context, u domain.LoginUsuario) (*domain.LoginUsuario, error) {
 	// validate := validator.New()
 	// err := validate.Struct(u)
 	// if err != nil {
@@ -107,7 +107,7 @@ func (us UserService) Login(ctx context.Context ,u domain.LoginUsuario) (*domain
 	}
 
 	if !res.Success {
-		return nil, fmt.Errorf("%s",res.Message)
+		return nil, fmt.Errorf("%s", res.Message)
 	}
 
 	usuario, ok := res.Data.(domain.LoginUsuario)

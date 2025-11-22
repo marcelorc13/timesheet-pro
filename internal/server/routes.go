@@ -9,7 +9,7 @@ import (
 )
 
 func (r Router) APIRoutes(uh api.UserHandler) {
-   	docs.SwaggerInfo.BasePath = "/api/v1"
+	docs.SwaggerInfo.BasePath = "/api/v1"
 
 	apiRouter := r.Router.Group("/api/v1")
 	apiRouter.GET("/", api.HomeHandler)
@@ -29,8 +29,8 @@ func (r Router) APIRoutes(uh api.UserHandler) {
 func (r Router) ViewsRoutes() {
 	viewsRouter := r.Router.Group("/")
 	viewsRouter.GET("/", views.HomeHandler)
-	
+
 	viewsRouter.GET("/signup", views.SignupHandler)
 	viewsRouter.GET("/login", views.LoginHandler)
-	
+
 }

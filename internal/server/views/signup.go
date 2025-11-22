@@ -5,6 +5,7 @@ import (
 	"github.com/marcelorc13/timesheet-pro/internal/templates/pages"
 	"github.com/marcelorc13/timesheet-pro/internal/utils"
 )
-func SignupHandler(c *gin.Context){
+
+func SignupHandler(c *gin.Context) {
 	utils.Render(c.Request.Context(), c.Writer, pages.SignupPage())
-} 
+}
