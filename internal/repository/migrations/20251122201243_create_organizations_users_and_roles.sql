@@ -10,7 +10,7 @@ CREATE TABLE organization_users(
   id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   user_id UUID NOT NULL REFERENCES users(id),
   organization_id UUID NOT NULL REFERENCES organizations(id),
-  role SMALLINT NOT NULL REFERENCES organization_roles(id),
+  organization_role_id SMALLINT NOT NULL REFERENCES organization_roles(id),
   joined_at TIMESTAMPTZ DEFAULT NOW(),
 
   UNIQUE(user_id, organization_id)
