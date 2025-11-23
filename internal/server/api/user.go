@@ -9,7 +9,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/marcelorc13/timesheet-pro/internal/domain"
 	service "github.com/marcelorc13/timesheet-pro/internal/services"
-	"github.com/marcelorc13/timesheet-pro/internal/templates/components"
 	"github.com/marcelorc13/timesheet-pro/internal/utils"
 )
 
@@ -80,55 +79,40 @@ func (h UserHandler) Create(c *gin.Context) {
 	var usuario domain.User
 
 	if err := c.ShouldBind(&usuario); err != nil {
-		c.Status(http.StatusBadRequest)
-		utils.Render(c.Request.Context(), c.Writer, components.Response(err.Error(), true))
+		c.JSON(http.StatusBadRequest, domain.HttpResponse{Status: http.StatusBadRequest, Message: err.Error()})
 		return
 	}
 
 	err := h.service.Create(c.Request.Context(), usuario)
 	if err != nil {
-		c.Status(http.StatusBadRequest)
-		utils.Render(c.Request.Context(), c.Writer, components.Response(err.Error(), true))
+		c.JSON(http.StatusBadRequest, domain.HttpResponse{Status: http.StatusBadRequest, Message: err.Error()})
 		return
 	}
 	c.Header("HX-Redirect", "/login")
-	c.Status(http.StatusCreated)
-	utils.Render(c.Request.Context(), c.Writer, components.Response("Usuário criado com sucesso! realize o login", false))
+	c.JSON(http.StatusCreated, domain.HttpResponse{Status: http.StatusCreated, Message: "Usuário criado com sucesso"})
 }
 func (h UserHandler) Login(c *gin.Context) {
 	var usuario domain.LoginUser
 
 	if err := c.ShouldBind(&usuario); err != nil {
-		c.Status(400)
-		utils.Render(c.Request.Context(), c.Writer, components.Response(err.Error(), true))
+		c.JSON(http.StatusBadRequest, domain.HttpResponse{Status: http.StatusBadRequest, Message: err.Error()})
+		return
 	}
 
 	u, err := h.service.Login(c.Request.Context(), usuario)
 
 	if err != nil {
-		if strings.Contains(err.Error(), "usuário não encontrado") {
-			c.Status(401)
-			utils.Render(c.Request.Context(), c.Writer, components.Response("Usuário não existe", true))
-			return
-		}
-		if strings.Contains(err.Error(), "senha incorreta") {
-			c.Status(401)
-			utils.Render(c.Request.Context(), c.Writer, components.Response("Senha incorreta", true))
-			return
-		}
-		c.Status(401)
-		utils.Render(c.Request.Context(), c.Writer, components.Response("Usuário ou senha incorreta", true))
+		c.JSON(http.StatusUnauthorized, domain.HttpResponse{Status: http.StatusUnauthorized, Message: "Usuário ou senha incorreta"})
 		return
 	}
 
 	token, err := utils.GenerateJwtToken(u.ID.String())
 	if err != nil {
-		c.Status(400)
-		utils.Render(c.Request.Context(), c.Writer, components.Response(fmt.Sprintf("Erro ao gerar token JWT: %v", err), true))
+		c.JSON(http.StatusInternalServerError, domain.HttpResponse{Status: http.StatusInternalServerError, Message: fmt.Sprintf("Erro ao gerar token JWT: %v", err)})
+		return
 	}
 
 	c.SetCookie("token", token, 3600, "/", "localhost", false, true)
 	c.Header("HX-Redirect", "/")
-	c.Status(200)
-	utils.Render(c.Request.Context(), c.Writer, components.Response("Usuário logado com sucesso", false))
+	c.JSON(http.StatusOK, domain.HttpResponse{Status: http.StatusOK, Message: "Login bem-sucedido"})
 }

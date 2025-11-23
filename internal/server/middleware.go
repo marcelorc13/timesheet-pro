@@ -13,14 +13,14 @@ func AuthMiddleware() gin.HandlerFunc {
 		if err != nil {
 			c.Redirect(http.StatusSeeOther, "/login")
 			c.Abort()
-			return 
+			return
 		}
 
 		err = utils.VerifyJwtToken(tokenString)
 		if err != nil {
 			c.Redirect(http.StatusSeeOther, "/login")
 			c.Abort()
-			return 
+			return
 		}
 
 		c.Next()
