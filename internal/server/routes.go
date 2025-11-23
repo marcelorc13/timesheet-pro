@@ -8,7 +8,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func (r Router) APIRoutes(uh api.UserHandler) {
+func (r Router) APIRoutes(uh api.UserHandler, oh api.OrganizationHandler) {
 	docs.SwaggerInfo.BasePath = "/api/v1"
 
 	apiRouter := r.Router.Group("/api/v1")
@@ -21,6 +21,11 @@ func (r Router) APIRoutes(uh api.UserHandler) {
 	userRoutes.DELETE("/:id", uh.Delete)
 	userRoutes.POST("/", uh.Create)
 	userRoutes.POST("/login", uh.Login)
+
+
+	organizationRoutes := apiRouter.Group("organizations/")
+
+	organizationRoutes.POST("/", oh.Create)
 
 	r.Router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	// http://localhost:port/swagger/index.html

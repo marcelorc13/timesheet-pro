@@ -32,7 +32,11 @@ func main() {
 	us := service.NewUserService(*ur)
 	uh := api.NewUserHandler(*us)
 
-	router.APIRoutes(*uh)
+	or := repository.NewOrganizationRepository(db)
+	os := service.NewOrganizationService(*or)
+	oh := api.NewOrganizationHandler(*os)
+
+	router.APIRoutes(*uh, *oh)
 	router.ViewsRoutes()
 
 	router.Start()
