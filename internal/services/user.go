@@ -93,7 +93,7 @@ func (us UserService) Create(ctx context.Context, u domain.User) error {
 	return nil
 }
 
-func (us UserService) Login(ctx context.Context, u domain.LoginUser) (*domain.LoginUser, error) {
+func (us UserService) Login(ctx context.Context, u domain.LoginUser) (*domain.User, error) {
 	// validate := validator.New()
 	// err := validate.Struct(u)
 	// if err != nil {
@@ -110,7 +110,7 @@ func (us UserService) Login(ctx context.Context, u domain.LoginUser) (*domain.Lo
 		return nil, fmt.Errorf("%s", res.Message)
 	}
 
-	usuario, ok := res.Data.(domain.LoginUser)
+	usuario, ok := res.Data.(domain.User)
 
 	if !ok {
 		return nil, fmt.Errorf("erro ao converter dados")

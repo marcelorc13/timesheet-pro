@@ -106,7 +106,7 @@ func (h UserHandler) Login(c *gin.Context) {
 		return
 	}
 
-	token, err := utils.GenerateJwtToken(u.ID.String())
+	token, err := utils.GenerateJwtToken(u.ID.String(), u.Name)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, domain.HttpResponse{Status: http.StatusInternalServerError, Message: fmt.Sprintf("Erro ao gerar token JWT: %v", err)})
 		return

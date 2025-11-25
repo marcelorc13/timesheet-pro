@@ -94,9 +94,9 @@ func (r *UserRepository) Create(ctx context.Context, u domain.User) (domain.DBRe
 }
 
 func (r *UserRepository) Login(ctx context.Context, u domain.LoginUser) (domain.DBResponse, error) {
-	var usuario domain.LoginUser
-	err := r.DB.QueryRow(ctx, "SELECT id, email, password FROM users WHERE email = $1", u.Email).
-		Scan(&usuario.ID, &usuario.Email, &usuario.Password)
+	var usuario domain.User
+	err := r.DB.QueryRow(ctx, "SELECT id, name, email, password FROM users WHERE email = $1", u.Email).
+		Scan(&usuario.ID, &usuario.Name, &usuario.Email, &usuario.Password)
 
 	if err == sql.ErrNoRows {
 		return domain.DBResponse{Message: "usuário não encontrado"}, nil
@@ -110,4 +110,18 @@ func (r *UserRepository) Login(ctx context.Context, u domain.LoginUser) (domain.
 		return domain.DBResponse{Message: "password incorreta"}, nil
 	}
 	return domain.DBResponse{Success: true, Data: usuario}, nil
+}
+
+func (r *UserRepository) GetByEmail(ctx context.Context, email string) (domain.DBResponse, error) {
+	var user domain.User
+
+	err := r.DB.QueryRow(ctx, "SELECT id, name, email, password FROM users WHERE email = $1", email).
+		Scan(&user.ID, &user.Name, &user.Email, &user.Password)
+
+	if err == sql.ErrNoRows {
+		return domain.DBResponse{Message: "usuário não encontrado"}, nil
+	} else if err != nil {
+		return domain.DBResponse{Message: err.Error()}, err
+	}
+	return domain.DBResponse{Success: true, Data: user}, nil
 }

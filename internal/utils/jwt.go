@@ -1,3 +1,5 @@
+// Package utils provides utility functions for the application.
+// It contains helpers for JWT authentication, rendering templates, and other common operations.
 package utils
 
 import (
@@ -7,13 +9,14 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func GenerateJwtToken(id string) (string, error) {
+func GenerateJwtToken(id string, name string) (string, error) {
 	segredo := os.Getenv("JWT_SECRET")
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256,
 		jwt.MapClaims{
-			"id":  id,
-			"exp": time.Now().Add(time.Hour * 1).Unix(),
+			"id":   id,
+			"name": name,
+			"exp":  time.Now().Add(time.Hour * 1).Unix(),
 		})
 	tokenString, err := token.SignedString([]byte(segredo))
 	if err != nil {
