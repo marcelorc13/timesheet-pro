@@ -1,3 +1,5 @@
+// Package domain defines the core business entities and data structures.
+// It contains domain models, DTOs, and business rules independent of infrastructure.
 package domain
 
 import (
@@ -16,12 +18,22 @@ type Organization struct {
 
 type CreateOrganization struct {
 	UserID string `json:"user_id" form:"user_id" validate:"required"`
-	Name   string    `json:"name" form:"name" validate:"required,min=3,max=100"`
+	Name   string `json:"name" form:"name" validate:"required,min=3,max=100"`
+}
+
+type UpdateOrganization struct {
+	Name string `json:"name" form:"name" validate:"required,min=3,max=100"`
+}
+
+type AddUserToOrganization struct {
+	Email string `json:"email" form:"email" validate:"required,email"`
+	Role  string `json:"role" form:"role" validate:"required,oneof=member admin"`
 }
 
 type OrganizationUser struct {
 	UserID   uuid.UUID `json:"user_id"`
 	Name     string    `json:"name"`
+	Email    string    `json:"email"`
 	Role     Role      `json:"role"`
 	JoinedAt time.Time `json:"joined_at"`
 }

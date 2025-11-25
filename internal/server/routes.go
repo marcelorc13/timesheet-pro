@@ -1,7 +1,9 @@
 package server
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/marcelorc13/timesheet-pro/docs"
+	"github.com/marcelorc13/timesheet-pro/internal/repository"
 	"github.com/marcelorc13/timesheet-pro/internal/server/api"
 	"github.com/marcelorc13/timesheet-pro/internal/server/views"
 	swaggerfiles "github.com/swaggo/files"
@@ -26,18 +28,33 @@ func (r Router) APIRoutes(uh api.UserHandler, oh api.OrganizationHandler) {
 	organizationRoutes := apiRouter.Group("organizations/")
 
 	organizationRoutes.POST("/", oh.Create)
+	organizationRoutes.GET("/", oh.List)
+	organizationRoutes.GET("/:id", oh.GetByID)
+	organizationRoutes.GET("/user/:userId", oh.GetByUserID)
+	organizationRoutes.PUT("/:id", oh.Update)
+	organizationRoutes.DELETE("/:id", oh.Delete)
+	organizationRoutes.POST("/:id/users", oh.AddUser)
 
 	r.Router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	// http://localhost:port/swagger/index.html
 }
 
-func (r Router) ViewsRoutes() {
+func (r Router) ViewsRoutes(ovh views.OrganizationViewHandler, orgRepo *repository.OrganizationRepository) {
 	viewsRouter := r.Router.Group("/")
 
 	viewsRouter.GET("/signup", views.SignupHandler)
 	viewsRouter.GET("/login", views.LoginHandler)
+	viewsRouter.GET("/logout", views.LogoutHandler)
 
 	authRoutes := viewsRouter.Group("/")
 	authRoutes.Use(AuthMiddleware())
-	authRoutes.GET("/", views.HomeHandler)
+	authRoutes.GET("/", func(c *gin.Context) {
+		views.HomeHandler(c, *orgRepo)
+	})
+	
+	// Organization view routes (authenticated) - list page removed
+	authRoutes.GET("/organizations/new", ovh.OrganizationCreateHandler)
+	authRoutes.GET("/organizations/:id", ovh.OrganizationDetailHandler)
+	authRoutes.GET("/organizations/:id/edit", ovh.OrganizationEditHandler)
+	authRoutes.GET("/organizations/:id/add-user", ovh.OrganizationAddUserHandler)
 }

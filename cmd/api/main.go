@@ -9,6 +9,7 @@ import (
 	"github.com/marcelorc13/timesheet-pro/internal/repository"
 	"github.com/marcelorc13/timesheet-pro/internal/server"
 	"github.com/marcelorc13/timesheet-pro/internal/server/api"
+	"github.com/marcelorc13/timesheet-pro/internal/server/views"
 	service "github.com/marcelorc13/timesheet-pro/internal/services"
 )
 
@@ -33,11 +34,14 @@ func main() {
 	uh := api.NewUserHandler(*us)
 
 	or := repository.NewOrganizationRepository(db)
-	os := service.NewOrganizationService(*or)
+	os := service.NewOrganizationService(*or, *ur)
 	oh := api.NewOrganizationHandler(*os)
 
+	// View handlers
+	ovh := views.NewOrganizationViewHandler(*or, *ur)
+
 	router.APIRoutes(*uh, *oh)
-	router.ViewsRoutes()
+	router.ViewsRoutes(*ovh, or)
 
 	router.Start()
 }

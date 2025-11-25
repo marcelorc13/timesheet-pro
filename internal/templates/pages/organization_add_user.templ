@@ -1,0 +1,101 @@
+package pages
+
+import (
+	"github.com/marcelorc13/timesheet-pro/internal/templates/layouts"
+	"github.com/marcelorc13/timesheet-pro/internal/domain"
+)
+
+templ OrganizationAddUserPage(org domain.Organization, userName string) {
+	@layouts.Base("Adicionar Usuário", userName) {
+		<div class="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-4 py-8">
+			<div class="w-full max-w-md">
+				<div class="mb-6">
+					<a href={ templ.URL("/organizations/" + org.ID.String()) } class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900">
+						<span class="material-symbols-outlined text-lg">arrow_back</span>
+						<span class="ml-1">Voltar</span>
+					</a>
+				</div>
+				<div class="w-full rounded-2xl bg-white p-6 shadow-lg sm:p-8">
+					<div id="add-user-message" class="mb-4"></div>
+					<div class="mb-6 text-center">
+						<div class="inline-flex items-center justify-center gap-2">
+							<span class="material-symbols-outlined text-3xl text-[var(--primary-color)] sm:text-4xl">
+								person_add
+							</span>
+							<h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">Adicionar Usuário</h1>
+						</div>
+						<p class="mt-2 text-sm text-gray-600">{ org.Name }</p>
+					</div>
+					<form
+						class="space-y-6"
+						hx-post={ "/api/v1/organizations/" + org.ID.String() + "/users" }
+						hx-target="#add-user-message"
+						hx-swap="innerHTML"
+						hx-ext="json-enc"
+					>
+						<div>
+							<label class="block text-sm font-medium text-gray-700" for="email">Email do Usuário</label>
+							<div class="mt-1">
+								<input
+									autocomplete="email"
+									class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-3 
+									placeholder-gray-400 shadow-sm focus:border-[var(--primary-color)] focus:outline-none 
+									focus:ring-[var(--primary-color)] sm:text-sm"
+									id="email"
+									name="email"
+									placeholder="usuario@exemplo.com"
+									required=""
+									type="email"
+								/>
+							</div>
+							<p class="mt-1 text-xs text-gray-500">O usuário deve estar cadastrado no sistema</p>
+						</div>
+						<div>
+							<label class="block text-sm font-medium text-gray-700" for="role">Função</label>
+							<div class="mt-1">
+								<select
+									class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-3 
+									shadow-sm focus:border-[var(--primary-color)] focus:outline-none 
+									focus:ring-[var(--primary-color)] sm:text-sm"
+									id="role"
+									name="role"
+									required=""
+								>
+									<option value="">Selecione uma função</option>
+									<option value="member">Membro</option>
+									<option value="admin">Administrador</option>
+								</select>
+							</div>
+							<p class="mt-1 text-xs text-gray-500">
+								Administradores podem editar a organização e adicionar usuários
+							</p>
+						</div>
+						<div>
+							<button
+								class="flex w-full justify-center rounded-md border border-transparent bg-[var(--primary-color)]
+								py-3 px-4 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2
+								focus:ring-blue-500 focus:ring-offset-2"
+								type="submit"
+							>
+								Adicionar Usuário
+							</button>
+						</div>
+					</form>
+					<div class="mt-6 rounded-md bg-blue-50 p-4">
+						<div class="flex">
+							<div class="flex-shrink-0">
+								<span class="material-symbols-outlined text-blue-400">info</span>
+							</div>
+							<div class="ml-3">
+								<p class="text-sm text-blue-700">
+									Apenas administradores podem adicionar usuários à organização.
+									O usuário receberá acesso assim que for adicionado.
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	}
+}

@@ -1,0 +1,66 @@
+package pages
+
+import "github.com/marcelorc13/timesheet-pro/internal/templates/layouts"
+
+templ OrganizationCreatePage(userID string, userName string) {
+    @layouts.Base("Nova Organização", userName) {
+        <div class="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-4 py-8">
+            <div class="w-full flex flex-col gap-4 max-w-md">
+
+                <div class="mb-4 rounded-md bg-blue-50 p-4 text-blue-800">
+                    Envie seu email para o administrador da sua organização para que ele o adicione.
+                </div>
+
+                <div class="w-full rounded-2xl bg-white p-6 shadow-lg sm:p-8">
+                    <div id="create-message" class="mb-4"></div>
+                    <div class="mb-6 text-center">
+                        <div class="inline-flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-3xl text-[var(--primary-color)] sm:text-4xl">
+                                business
+                            </span>
+                            <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">Nova Organização</h1>
+                        </div>
+                    </div>
+                    <form
+                        class="space-y-6"
+                        hx-post="/api/v1/organizations/"
+                        hx-target="#create-message"
+                        hx-swap="innerHTML"
+                        hx-ext="json-enc"
+                    >
+                        <input type="hidden" name="user_id" value={ userID }/>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700" for="name">Nome da Organização</label>
+                            <div class="mt-1">
+                                <input
+                                    class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-3 placeholder-gray-400 shadow-sm focus:border-[var(--primary-color)] focus:outline-none focus:ring-[var(--primary-color)] sm:text-sm"
+                                    id="name"
+                                    name="name"
+                                    placeholder="Digite o nome da organização"
+                                    required=""
+                                    type="text"
+                                    minlength="3"
+                                    maxlength="100"
+                                />
+                            </div>
+                            <p class="mt-1 text-xs text-gray-500">Mínimo 3 caracteres, máximo 100</p>
+                        </div>
+                        <div>
+                            <button
+                                class="flex w-full justify-center rounded-md border border-transparent bg-[var(--primary-color)] py-3 px-4 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                type="submit"
+                            >
+                                Criar Organização
+                            </button>
+                        </div>
+                    </form>
+                    <div class="mt-6 text-center">
+                        <p class="text-sm text-gray-600">
+                            Após criar, você será o administrador da organização
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
