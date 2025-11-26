@@ -1,0 +1,23 @@
+services:
+  # Web Service
+  - type: web
+    name: timesheet-pro
+    runtime: docker
+    plan: free
+    healthCheckPath: /
+    envVars:
+      - key: POSTGRES_URL
+        fromDatabase:
+          name: timesheet-pro-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: GIN_MODE
+        value: release
+
+databases:
+  # PostgreSQL Database
+  - name: timesheet-pro-db
+    databaseName: timesheet_pro
+    user: timesheet_user
+    plan: free
