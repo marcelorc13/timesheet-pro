@@ -10,7 +10,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func (r Router) APIRoutes(uh api.UserHandler, oh api.OrganizationHandler) {
+func (r Router) APIRoutes(uh api.UserHandler, oh api.OrganizationHandler, th api.TimesheetHandler) {
 	docs.SwaggerInfo.BasePath = "/api/v1"
 
 	apiRouter := r.Router.Group("/api/v1")
@@ -35,6 +35,13 @@ func (r Router) APIRoutes(uh api.UserHandler, oh api.OrganizationHandler) {
 	organizationRoutes.DELETE("/:id", oh.Delete)
 	organizationRoutes.POST("/:id/users", oh.AddUser)
 	organizationRoutes.DELETE("/:id/users/:userId", oh.RemoveUser)
+
+	// Timesheet routes (under organizations, using :id to match organization routes)
+	organizationRoutes.POST("/:id/clock-in", th.ClockIn)
+	organizationRoutes.GET("/:id/timesheets/me", th.GetMyTimesheets)
+	organizationRoutes.GET("/:id/timesheets/me/status", th.GetMyStatus)
+	organizationRoutes.GET("/:id/users/:userId/timesheets", th.GetUserTimesheets)
+	organizationRoutes.GET("/:id/timesheets/all", th.GetAllTimesheets)
 
 	r.Router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	// http://localhost:port/swagger/index.html

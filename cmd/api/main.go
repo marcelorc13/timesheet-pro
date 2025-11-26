@@ -37,10 +37,15 @@ func main() {
 	os := service.NewOrganizationService(*or, *ur)
 	oh := api.NewOrganizationHandler(*os)
 
+	// Timesheet setup
+	tr := repository.NewTimesheetRepository(db)
+	ts := service.NewTimesheetService(tr, or)
+	th := api.NewTimesheetHandler(ts)
+
 	// View handlers
 	ovh := views.NewOrganizationViewHandler(*os, *us)
 
-	router.APIRoutes(*uh, *oh)
+	router.APIRoutes(*uh, *oh, *th)
 	router.ViewsRoutes(*ovh, or)
 
 	router.Start()
