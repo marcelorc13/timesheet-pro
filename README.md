@@ -4,6 +4,8 @@
 
 **TimeSheet PRO** é uma aplicação *fullstack* desenvolvida em Go que substitui planilhas manuais por uma plataforma digital centralizada. O projeto utiliza **Server-Side Rendering (SSR)** com **Templ** e **HTMX** para oferecer uma experiência de usuário ágil e dinâmica, sem a complexidade de SPAs pesadas.
 
+[Link](https://timesheet-pro.onrender.com) para a aplicação em produção 
+
 ## 🚀 Tecnologias Utilizadas
 
 * **Backend:** [Go](https://go.dev/) (Golang)
@@ -11,7 +13,6 @@
 * **Template Engine:** [Templ](https://templ.guide/) (Type-safe HTML para Go)
 * **Interatividade:** [HTMX](https://htmx.org/) (AJAX, CSS Transitions, WebSockets via HTML)
 * **Banco de Dados:** [PostgreSQL](https://www.postgresql.org/) (Driver: `pgx`)
-* **Migrações:** [Goose](https://pressly.github.io/goose/)
 * **Estilização:** [TailwindCSS](https://tailwindcss.com/)
 * **Integrações:** API ViaCEP (Autocompletar endereços)
 
