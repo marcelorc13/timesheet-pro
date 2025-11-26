@@ -22,6 +22,9 @@ RUN go tool templ generate
 # Build the application with optimizations
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags="-s -w" -o main ./cmd/api/main.go
 
+# Install goose for database migrations
+RUN go install -ldflags="-s -w" -tags="no_libsql no_mssql no_vertica no_clickhouse no_mysql no_sqlite3 no_ydb" github.com/pressly/goose/v3/cmd/goose@latest
+
 # Final stage - minimal production image
 FROM alpine:latest
 
@@ -33,8 +36,18 @@ WORKDIR /root/
 # Copy the binary from builder
 COPY --from=builder /app/main .
 
+# Copy goose binary from builder
+COPY --from=builder /go/bin/goose /usr/local/bin/goose
+
+# Copy migration files
+COPY --from=builder /app/internal/repository/migrations /app/migrations
+
+# Copy entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Expose port (Render uses PORT env variable)
 EXPOSE 8080
 
-# Run the application
-CMD ["./main"]
+# Use entrypoint script to run migrations and start the app
+ENTRYPOINT ["docker-entrypoint.sh"]

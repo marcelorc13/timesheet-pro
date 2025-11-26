@@ -25,19 +25,6 @@ Set up each service individually through the Render dashboard.
 ---
 
 ## Option 1: Blueprint Deployment (Recommended)
-
-### Step 1: Push Your Code
-
-Make sure your code (including `Dockerfile` and `render.yaml`) is pushed to GitHub:
-
-```bash
-git add Dockerfile render.yaml
-git commit -m "Add Docker and Render configuration"
-git push origin main
-```
-
-### Step 2: Create New Blueprint
-
 1. Go to [Render Dashboard](https://dashboard.render.com/)
 2. Click **"New +"** → **"Blueprint"**
 3. Connect your Git repository
@@ -60,21 +47,26 @@ The blueprint will automatically configure most environment variables, but you m
 > [!NOTE]
 > Render automatically injects the `PORT` environment variable. Your application should read from `os.Getenv("PORT")` if needed.
 
-### Step 4: Run Database Migrations
+### Step 4: Migrations (Automated)
 
-After deployment, you'll need to run migrations:
+> [!NOTE]
+> Migrations now run **automatically** when your container starts! The Docker image includes goose and your migration files, and they will be applied before the application starts.
 
-1. Go to your web service in the Render dashboard
-2. Click **"Shell"** tab
-3. Run migrations (adjust based on your migration tool):
+**What happens on deployment:**
+1. Container starts
+2. `docker-entrypoint.sh` runs
+3. Goose applies any pending migrations
+4. Application starts if migrations succeed
 
-```bash
-# If using goose
-goose -dir ./migrations postgres "${POSTGRES_URL}" up
-```
+**Monitoring migrations:**
+- Check the deployment logs in Render dashboard
+- Look for "Running database migrations..." message
+- Verify "Migrations completed successfully!" appears
 
-> [!IMPORTANT]
-> Make sure your migrations directory is included in the Docker image. You may need to update the Dockerfile to copy migrations.
+**If migrations fail:**
+- The container will not start
+- Check logs for specific migration errors
+- Fix the issue and redeploy
 
 ---
 
@@ -118,20 +110,21 @@ In the web service settings, add these environment variables:
 > openssl rand -base64 32
 > ```
 
-### Step 4: Deploy
+### Step 5: Deploy and Monitor
 
 1. Click **"Create Web Service"**
 2. Render will:
    - Clone your repository
    - Build the Docker image using your `Dockerfile`
+   - Start the container (migrations run automatically)
    - Deploy the application
-3. Wait for deployment to complete (check the logs)
+3. Watch the logs for:
+   - "Running database migrations..."
+   - "Migrations completed successfully!"
+   - "Starting application..."
 
-### Step 5: Run Migrations
-
-1. Go to your web service
-2. Click **"Shell"** tab
-3. Run your migration commands
+> [!NOTE]
+> Migrations are now **fully automated**. The entrypoint script runs goose migrations before starting your app.
 
 ---
 
@@ -209,18 +202,27 @@ func main() {
 > [!WARNING]
 > You'll need to update the `router.Start()` method or replace it with `r.Run()` as shown above to properly use the PORT environment variable.
 
----
+## Automated Migration Process
 
-## Including Migrations in Docker
+The deployment includes **automatic database migrations**:
 
-If you need to copy migrations into the Docker image, update your `Dockerfile`:
+**What's included:**
+- `docker-entrypoint.sh` - Script that runs migrations before starting the app
+- Goose binary in the Docker image
+- All migration files from `internal/repository/migrations/`
 
-```dockerfile
-# Copy the entire project (including migrations)
-COPY . .
-```
+**How it works:**
+1. Container starts on Render
+2. Entrypoint script checks `POSTGRES_URL` is set
+3. Runs `goose postgres "$POSTGRES_URL" up`
+4. If migrations succeed → app starts
+5. If migrations fail → container exits (check logs)
 
-The current Dockerfile already does this with `COPY . .`, so your migrations should be included.
+**Benefits:**
+- No manual migration steps needed
+- Migrations run automatically on every deployment
+- Failed migrations prevent broken deployments
+- Zero-downtime updates (Render handles rollback)
 
 ---
 
@@ -273,6 +275,21 @@ Check:
 1. Dockerfile syntax
 2. Go module dependencies
 3. Build logs for specific errors
+
+### Migration Failures
+
+If migrations fail and the container won't start:
+
+1. **Check the logs** for the specific migration error
+2. **Common issues:**
+   - SQL syntax errors in migration files
+   - Missing database permissions
+   - Migrations out of order
+   - POSTGRES_URL not set or incorrect
+3. **Fix the migration** and redeploy
+4. **Manual rollback** (if needed):
+   - Use Render Shell
+   - Run `goose postgres "$POSTGRES_URL" down` to rollback
 
 ---
 
