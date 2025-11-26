@@ -6,16 +6,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// LogoutHandler clears the JWT token cookie and redirects to login
 func LogoutHandler(c *gin.Context) {
-	// Clear the token cookie
+	// Clear the token cookie with same settings as login
 	c.SetCookie(
 		"token",
 		"",
 		-1, // MaxAge -1 deletes the cookie
 		"/",
-		"",
-		false,
+		"", // Empty domain works on any domain
+		true, // Secure flag for HTTPS
 		true, // HttpOnly
 	)
 

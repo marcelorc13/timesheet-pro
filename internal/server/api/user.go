@@ -113,7 +113,11 @@ func (h UserHandler) Login(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie("token", token, 3600, "/", "localhost", false, true)
+	// Set cookie with production-ready settings
+	// Domain is empty ("") to work on any domain (localhost or render.com)
+	// Secure is true for HTTPS in production (Render automatically uses HTTPS)
+	// HttpOnly is true to prevent XSS attacks
+	c.SetCookie("token", token, 3600, "/", "", true, true)
 	c.Header("HX-Redirect", "/")
 	c.JSON(http.StatusOK, domain.HttpResponse{Status: http.StatusOK, Message: "Login bem-sucedido"})
 }
