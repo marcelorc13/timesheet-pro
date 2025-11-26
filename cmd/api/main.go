@@ -38,7 +38,7 @@ func main() {
 	oh := api.NewOrganizationHandler(*os)
 
 	// View handlers
-	ovh := views.NewOrganizationViewHandler(*or, *ur)
+	ovh := views.NewOrganizationViewHandler(*os, *us)
 
 	router.APIRoutes(*uh, *oh)
 	router.ViewsRoutes(*ovh, or)

@@ -8,20 +8,20 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/marcelorc13/timesheet-pro/internal/domain"
-	"github.com/marcelorc13/timesheet-pro/internal/repository"
+	service "github.com/marcelorc13/timesheet-pro/internal/services"
 	"github.com/marcelorc13/timesheet-pro/internal/templates/pages"
 	"github.com/marcelorc13/timesheet-pro/internal/utils"
 )
 
 type OrganizationViewHandler struct {
-	orgRepo  repository.OrganizationRepository
-	userRepo repository.UserRepository
+	orgServ  service.OrganizationService
+	userServ service.UserService
 }
 
-func NewOrganizationViewHandler(orgRepo repository.OrganizationRepository, userRepo repository.UserRepository) *OrganizationViewHandler {
+func NewOrganizationViewHandler(orgServ service.OrganizationService, userServ service.UserService) *OrganizationViewHandler {
 	return &OrganizationViewHandler{
-		orgRepo:  orgRepo,
-		userRepo: userRepo,
+		orgServ:  orgServ,
+		userServ: userServ,
 	}
 }
 
@@ -60,33 +60,30 @@ func (h *OrganizationViewHandler) OrganizationDetailHandler(c *gin.Context) {
 	}
 
 	// Get organization
-	res, err := h.orgRepo.GetByID(c.Request.Context(), orgID)
-	if err != nil || !res.Success {
+	org, err := h.orgServ.GetByID(c.Request.Context(), orgID)
+	if err != nil {
 		c.String(http.StatusNotFound, "Organização não encontrada")
 		return
 	}
 
-	org, ok := res.Data.(domain.Organization)
-	if !ok {
-		c.String(http.StatusInternalServerError, "Erro ao processar dados")
+	// Check if user is admin
+	adminRes, err := h.orgServ.IsUserAdmin(c.Request.Context(), userID, orgID)
+	if err != nil {
 		return
 	}
-
-	// Check if user is admin
-	adminRes, _ := h.orgRepo.IsUserAdmin(c.Request.Context(), userID, orgID)
 	isAdmin := false
-	if adminRes.Success {
-		isAdmin, _ = adminRes.Data.(bool)
+	if adminRes {
+		isAdmin = adminRes
 	}
 
-	// Get organization members - initialize empty slice
-	members := []domain.OrganizationUser{}
-	membersRes, err := h.orgRepo.GetOrganizationMembers(c.Request.Context(), orgID)
-	if err == nil && membersRes.Success && membersRes.Data != nil {
-		// Try to cast to the correct type
-		if membersList, ok := membersRes.Data.([]domain.OrganizationUser); ok {
-			members = membersList
-		}
+	// Get organization members - ensure non-nil slice
+	members, err := h.orgServ.GetMembers(c.Request.Context(), orgID)
+	if err != nil {
+		return
+	}
+	if members == nil {
+		empty := []domain.OrganizationUser{}
+		members = &empty
 	}
 
 	// Get user name
@@ -95,7 +92,7 @@ func (h *OrganizationViewHandler) OrganizationDetailHandler(c *gin.Context) {
 		userName = ""
 	}
 
-	utils.Render(c.Request.Context(), c.Writer, pages.OrganizationDetailPage(org, isAdmin, userIDStr, members, userName))
+	utils.Render(c.Request.Context(), c.Writer, pages.OrganizationDetailPage(*org, isAdmin, userIDStr, *members, userName))
 }
 
 // OrganizationCreateHandler shows the create organization form
@@ -163,10 +160,10 @@ func (h *OrganizationViewHandler) OrganizationEditHandler(c *gin.Context) {
 	}
 
 	// Check if user is admin
-	adminRes, _ := h.orgRepo.IsUserAdmin(c.Request.Context(), userID, orgID)
+	adminRes, _ := h.orgServ.IsUserAdmin(c.Request.Context(), userID, orgID)
 	isAdmin := false
-	if adminRes.Success {
-		isAdmin, _ = adminRes.Data.(bool)
+	if adminRes {
+		isAdmin = adminRes
 	}
 
 	if !isAdmin {
@@ -175,15 +172,9 @@ func (h *OrganizationViewHandler) OrganizationEditHandler(c *gin.Context) {
 	}
 
 	// Get organization
-	res, err := h.orgRepo.GetByID(c.Request.Context(), orgID)
-	if err != nil || !res.Success {
+	org, err := h.orgServ.GetByID(c.Request.Context(), orgID)
+	if err != nil {
 		c.String(http.StatusNotFound, "Organização não encontrada")
-		return
-	}
-
-	org, ok := res.Data.(domain.Organization)
-	if !ok {
-		c.String(http.StatusInternalServerError, "Erro ao processar dados")
 		return
 	}
 
@@ -193,7 +184,7 @@ func (h *OrganizationViewHandler) OrganizationEditHandler(c *gin.Context) {
 		userName = ""
 	}
 
-	utils.Render(c.Request.Context(), c.Writer, pages.OrganizationEditPage(org, userName))
+	utils.Render(c.Request.Context(), c.Writer, pages.OrganizationEditPage(*org, userName))
 }
 
 // OrganizationAddUserHandler shows the add user form
@@ -231,10 +222,13 @@ func (h *OrganizationViewHandler) OrganizationAddUserHandler(c *gin.Context) {
 	}
 
 	// Check if user is admin
-	adminRes, _ := h.orgRepo.IsUserAdmin(c.Request.Context(), userID, orgID)
+	adminRes, err := h.orgServ.IsUserAdmin(c.Request.Context(), userID, orgID)
+	if err != nil {
+		return
+	}
 	isAdmin := false
-	if adminRes.Success {
-		isAdmin, _ = adminRes.Data.(bool)
+	if adminRes {
+		isAdmin = adminRes
 	}
 
 	if !isAdmin {
@@ -243,15 +237,9 @@ func (h *OrganizationViewHandler) OrganizationAddUserHandler(c *gin.Context) {
 	}
 
 	// Get organization
-	res, err := h.orgRepo.GetByID(c.Request.Context(), orgID)
-	if err != nil || !res.Success {
+	org, err := h.orgServ.GetByID(c.Request.Context(), orgID)
+	if err != nil {
 		c.String(http.StatusNotFound, "Organização não encontrada")
-		return
-	}
-
-	org, ok := res.Data.(domain.Organization)
-	if !ok {
-		c.String(http.StatusInternalServerError, "Erro ao processar dados")
 		return
 	}
 
@@ -261,5 +249,5 @@ func (h *OrganizationViewHandler) OrganizationAddUserHandler(c *gin.Context) {
 		userName = ""
 	}
 
-	utils.Render(c.Request.Context(), c.Writer, pages.OrganizationAddUserPage(org, userName))
+	utils.Render(c.Request.Context(), c.Writer, pages.OrganizationAddUserPage(*org, userName))
 }

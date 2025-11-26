@@ -34,7 +34,7 @@ func (h OrganizationHandler) Create(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, domain.HttpResponse{Status: http.StatusBadRequest, Message: err.Error()})
 		return
 	}
-	c.Header("HX-Redirect", "/login")
+	c.Header("HX-Redirect", "/")
 	c.JSON(http.StatusCreated, domain.HttpResponse{Status: http.StatusCreated, Message: "Organização criada com sucesso", Data: orgID})
 }
 
@@ -281,5 +281,61 @@ func (h OrganizationHandler) AddUser(c *gin.Context) {
 		return
 	}
 
+	c.Header("HX-Redirect", "/")
 	c.JSON(http.StatusCreated, domain.HttpResponse{Status: http.StatusCreated, Message: "Usuário adicionado à organização com sucesso"})
+}
+
+func (h OrganizationHandler) RemoveUser(c *gin.Context) {
+	id := c.Param("id")
+
+	orgID, err := uuid.Parse(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.HttpResponse{Status: http.StatusBadRequest, Message: "ID da organização inválido"})
+		return
+	}
+
+	utID := c.Param("userId")
+	userTargetID, err := uuid.Parse(utID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.HttpResponse{Status: http.StatusBadRequest, Message: "ID do usuário inválido"})
+		return
+	}
+
+	// Get user ID from JWT token
+	tokenString, err := c.Cookie("token")
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, domain.HttpResponse{Status: http.StatusUnauthorized, Message: "Token não encontrado"})
+		return
+	}
+
+	claims, err := utils.GetTokenClaims(tokenString)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, domain.HttpResponse{Status: http.StatusUnauthorized, Message: "Token inválido"})
+		return
+	}
+
+	userIDStr, ok := claims["id"].(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, domain.HttpResponse{Status: http.StatusUnauthorized, Message: "Token inválido"})
+		return
+	}
+
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, domain.HttpResponse{Status: http.StatusUnauthorized, Message: "ID de usuário inválido no token"})
+		return
+	}
+
+	err = h.service.RemoveUserFromOrganization(c.Request.Context(), userID, orgID, userTargetID)
+	if err != nil {
+		if err.Error() == "usuário não tem permissão para remover membros desta organização" {
+			c.JSON(http.StatusForbidden, domain.HttpResponse{Status: http.StatusForbidden, Message: err.Error()})
+			return
+		}
+		c.JSON(http.StatusBadRequest, domain.HttpResponse{Status: http.StatusBadRequest, Message: err.Error()})
+		return
+	}
+
+	c.Header("HX-Refresh", "true")
+	c.JSON(http.StatusNoContent, domain.HttpResponse{Status: http.StatusNoContent, Message: "Usuário removido da organização com sucesso"})
 }

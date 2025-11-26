@@ -245,16 +245,19 @@ func (r *OrganizationRepository) GetOrganizationMembers(ctx context.Context, org
 			u.id, 
 			u.name, 
 			u.email,
-			or.name as role,
+			r.name as role,
 			ou.joined_at as joined_at
 		FROM users u
 		JOIN organization_users ou ON u.id = ou.user_id
-		JOIN organization_roles or ON ou.organization_role_id = or.id
-		WHERE ou.organization_id = $1
+		JOIN organization_roles r ON ou.organization_role_id = r.id
+		WHERE ou.organization_id = @organizationID
 		ORDER BY ou.joined_at
 	`
+	args := pgx.StrictNamedArgs{
+		"organizationID": organizationID,
+	}
 
-	rows, err := r.DB.Query(ctx, query, organizationID)
+	rows, err := r.DB.Query(ctx, query, args)
 	if err != nil {
 		return domain.DBResponse{Success: false, Message: "erro ao buscar membros"}, err
 	}

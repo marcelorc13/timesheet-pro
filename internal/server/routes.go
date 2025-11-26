@@ -34,6 +34,7 @@ func (r Router) APIRoutes(uh api.UserHandler, oh api.OrganizationHandler) {
 	organizationRoutes.PUT("/:id", oh.Update)
 	organizationRoutes.DELETE("/:id", oh.Delete)
 	organizationRoutes.POST("/:id/users", oh.AddUser)
+	organizationRoutes.DELETE("/:id/users/:userId", oh.RemoveUser)
 
 	r.Router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	// http://localhost:port/swagger/index.html
