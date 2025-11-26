@@ -36,6 +36,7 @@ func (r Router) APIRoutes(uh api.UserHandler, oh api.OrganizationHandler, th api
 	organizationRoutes.DELETE("/:id", oh.Delete)
 	organizationRoutes.POST("/:id/users", oh.AddUser)
 	organizationRoutes.DELETE("/:id/users/:userId", oh.RemoveUser)
+	organizationRoutes.POST("/:id/leave", oh.Leave)
 
 	organizationRoutes.POST("/:id/clock-in", th.ClockIn)
 	organizationRoutes.GET("/:id/timesheets/me", th.GetMyTimesheets)

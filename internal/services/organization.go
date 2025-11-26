@@ -322,3 +322,36 @@ func (s *OrganizationService) RemoveUserFromOrganization(ctx context.Context, re
 
 	return nil
 }
+
+func (s *OrganizationService) LeaveOrganization(ctx context.Context, userID, organizationID uuid.UUID) error {
+	// Check if user is in the organization
+	inOrgRes, err := s.repository.IsUserInOrganization(ctx, userID, organizationID)
+	if err != nil {
+		return err
+	}
+
+	if !inOrgRes.Success {
+		return fmt.Errorf("%s", inOrgRes.Message)
+	}
+
+	isMember, ok := inOrgRes.Data.(bool)
+	if !ok {
+		return fmt.Errorf("erro ao verificar membros")
+	}
+
+	if !isMember {
+		return fmt.Errorf("você não é membro desta organização")
+	}
+
+	// Remove user
+	res, err := s.repository.RemoveUserFromOrganization(ctx, organizationID, userID)
+	if err != nil {
+		return err
+	}
+
+	if !res.Success {
+		return fmt.Errorf("%s", res.Message)
+	}
+
+	return nil
+}

@@ -1,73 +1,177 @@
 package pages
 
 import (
-	"github.com/marcelorc13/timesheet-pro/internal/templates/layouts"
+	"fmt"
 	"github.com/marcelorc13/timesheet-pro/internal/domain"
+	"github.com/marcelorc13/timesheet-pro/internal/templates/layouts"
 )
 
 templ OrganizationEditPage(org domain.Organization, userName string) {
 	@layouts.Base("Editar Organização", userName) {
 		<div class="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-4 py-8">
-			<div class="w-full max-w-md">
-				<div class="mb-6">
-					<a href={ templ.URL("/organizations/" + org.ID.String()) } class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900">
-						<span class="material-symbols-outlined text-lg">arrow_back</span>
-						<span class="ml-1">Voltar</span>
-					</a>
-				</div>
+			<div class="w-full flex flex-col gap-6 max-w-md">
+				
+				// --- CARTÃO DE EDIÇÃO ---
 				<div class="w-full rounded-2xl bg-white p-6 shadow-lg sm:p-8">
+					// Feedback do HTMX
 					<div id="edit-message" class="mb-4"></div>
+
 					<div class="mb-6 text-center">
 						<div class="inline-flex items-center justify-center gap-2">
 							<span class="material-symbols-outlined text-3xl text-[var(--primary-color)] sm:text-4xl">
-								edit
+								edit_square
 							</span>
 							<h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">Editar Organização</h1>
 						</div>
 					</div>
+
 					<form
 						class="space-y-6"
-						hx-put={ "/api/v1/organizations/" + org.ID.String() }
+						hx-put={ fmt.Sprintf("/api/v1/organizations/%s", org.ID.String()) }
 						hx-target="#edit-message"
 						hx-swap="innerHTML"
+						hx-trigger="submit"
 						hx-ext="json-enc"
 					>
+						// Campo Nome
 						<div>
 							<label class="block text-sm font-medium text-gray-700" for="name">Nome da Organização</label>
 							<div class="mt-1">
 								<input
-									class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-3 
-									placeholder-gray-400 shadow-sm focus:border-[var(--primary-color)] focus:outline-none 
-									focus:ring-[var(--primary-color)] sm:text-sm"
+									class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-3 placeholder-gray-400 shadow-sm focus:border-[var(--primary-color)] focus:outline-none focus:ring-[var(--primary-color)] sm:text-sm"
 									id="name"
 									name="name"
-									placeholder="Digite o nome da organização"
-									required=""
+									value={ org.Name }
+									required
 									type="text"
 									minlength="3"
 									maxlength="100"
-									value={ org.Name }
 								/>
 							</div>
-							<p class="mt-1 text-xs text-gray-500">Mínimo 3 caracteres, máximo 100</p>
 						</div>
+
+						// Seção de Endereço
+						<div class="space-y-4 border-t border-gray-200 pt-4">
+							<h3 class="text-lg font-medium text-gray-900">Endereço</h3>
+							
+							<div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+								// CEP
+								<div>
+									<label class="block text-sm font-medium text-gray-700" for="zip_code">CEP</label>
+									<div class="mt-1">
+										<input
+											class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-[var(--primary-color)] focus:outline-none focus:ring-[var(--primary-color)] sm:text-sm"
+											id="zip_code"
+											name="zip_code"
+											value={ org.Address.ZipCode }
+											placeholder="00000-000"
+											required
+											type="text"
+											onblur="checkCEP(this.value)"
+										/>
+									</div>
+								</div>
+
+								// Cidade
+								<div>
+									<label class="block text-sm font-medium text-gray-700" for="city">Cidade</label>
+									<div class="mt-1">
+										<input
+											class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 bg-gray-50 text-gray-600 sm:text-sm"
+											id="city"
+											name="city"
+											value={ org.Address.City }
+											required
+											type="text"
+											readonly
+										/>
+									</div>
+								</div>
+
+								// Estado
+								<div>
+									<label class="block text-sm font-medium text-gray-700" for="state">Estado</label>
+									<div class="mt-1">
+										<input
+											class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 bg-gray-50 text-gray-600 sm:text-sm"
+											id="state"
+											name="state"
+											value={ org.Address.State }
+											required
+											type="text"
+											readonly
+										/>
+									</div>
+								</div>
+
+								// Logradouro
+								<div class="sm:col-span-2">
+									<label class="block text-sm font-medium text-gray-700" for="public_place">Logradouro</label>
+									<div class="mt-1">
+										<input
+											class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 bg-gray-50 text-gray-600 sm:text-sm"
+											id="public_place"
+											name="public_place"
+											value={ org.Address.PublicPlace }
+											required
+											type="text"
+											readonly
+										/>
+									</div>
+								</div>
+
+								// Complemento
+								<div class="sm:col-span-2">
+									<label class="block text-sm font-medium text-gray-700" for="complement">Complemento</label>
+									<div class="mt-1">
+										<input
+											class="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-[var(--primary-color)] focus:outline-none focus:ring-[var(--primary-color)] sm:text-sm"
+											id="complement"
+											name="complement"
+											value={ org.Address.Complement }
+											placeholder="Apto, Sala, Bloco, etc."
+											type="text"
+										/>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						// Botão Salvar
 						<div>
 							<button
-								class="flex w-full justify-center rounded-md border border-transparent bg-[var(--primary-color)]
-								py-3 px-4 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2
-								focus:ring-blue-500 focus:ring-offset-2"
+								class="flex w-full justify-center rounded-md border border-transparent bg-[var(--primary-color)] py-3 px-4 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
 								type="submit"
 							>
 								Salvar Alterações
 							</button>
 						</div>
 					</form>
-					<div class="mt-6 text-center">
-						<p class="text-sm text-gray-600">
-							Apenas administradores podem editar a organização
-						</p>
-					</div>
 				</div>
+
+				// Reutilizando o script do ViaCEP
+				<script>
+					function checkCEP(cep) {
+						var cleanCep = cep.replace(/\D/g, '');
+						if (cleanCep.length === 8) {
+							document.getElementById('public_place').value = "...";
+							fetch(`https://viacep.com.br/ws/${cleanCep}/json/`)
+								.then(response => response.json())
+								.then(data => {
+									if (!data.erro) {
+										document.getElementById('public_place').value = data.logradouro;
+										document.getElementById('city').value = data.localidade;
+										document.getElementById('state').value = data.uf;
+										document.getElementById('complement').focus();
+									} else {
+										alert("CEP não encontrado.");
+										document.getElementById('public_place').value = "";
+									}
+								})
+								.catch(err => console.error(err));
+						}
+					}
+				</script>
 			</div>
 		</div>
 	}

@@ -339,3 +339,47 @@ func (h OrganizationHandler) RemoveUser(c *gin.Context) {
 	c.Header("HX-Refresh", "true")
 	c.JSON(http.StatusNoContent, domain.HttpResponse{Status: http.StatusNoContent, Message: "Usuário removido da organização com sucesso"})
 }
+
+func (h OrganizationHandler) Leave(c *gin.Context) {
+	id := c.Param("id")
+
+	orgID, err := uuid.Parse(id)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.HttpResponse{Status: http.StatusBadRequest, Message: "ID inválido"})
+		return
+	}
+
+	// Extract user ID from JWT token
+	tokenString, err := c.Cookie("token")
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, domain.HttpResponse{Status: http.StatusUnauthorized, Message: "Token não encontrado"})
+		return
+	}
+
+	claims, err := utils.GetTokenClaims(tokenString)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, domain.HttpResponse{Status: http.StatusUnauthorized, Message: "Token inválido"})
+		return
+	}
+
+	userIDStr, ok := claims["id"].(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, domain.HttpResponse{Status: http.StatusUnauthorized, Message: "ID de usuário inválido no token"})
+		return
+	}
+
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.HttpResponse{Status: http.StatusBadRequest, Message: "ID de usuário inválido"})
+		return
+	}
+
+	err = h.service.LeaveOrganization(c.Request.Context(), userID, orgID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.HttpResponse{Status: http.StatusBadRequest, Message: err.Error()})
+		return
+	}
+
+	c.Header("HX-Redirect", "/")
+	c.JSON(http.StatusOK, domain.HttpResponse{Status: http.StatusOK, Message: "Você saiu da organização com sucesso"})
+}

@@ -54,6 +54,24 @@ func (r *OrganizationRepository) CreateWithUser(ctx context.Context, co domain.C
 			return err
 		}
 
+		const insertAddressQuery = `
+			INSERT INTO addresses (organization_id, zip_code, complement, public_place, city, state)
+			VALUES (@orgID, @zipCode, @complement, @publicPlace, @city, @state)
+		`
+		args = pgx.StrictNamedArgs{
+			"orgID":       orgID,
+			"zipCode":     co.ZipCode,
+			"complement":  co.Complement,
+			"publicPlace": co.PublicPlace,
+			"city":        co.City,
+			"state":       co.State,
+		}
+
+		_, err = tx.Exec(ctx, insertAddressQuery, args)
+		if err != nil {
+			return err
+		}
+
 		return nil
 	})
 	if err != nil {
@@ -69,11 +87,20 @@ func (r *OrganizationRepository) GetOrganizationByUserID(ctx context.Context, us
 			o.id,
 			o.name,
 			o.created_by,
-			o.created_at
+			o.created_at,
+			a.id,
+			a.organization_id,
+			a.zip_code,
+			a.complement,
+			a.public_place,
+			a.city,
+			a.state
 		FROM
 			organizations o
 		JOIN
 			organization_users ou ON o.id = ou.organization_id
+		LEFT JOIN
+			addresses a ON o.id = a.organization_id
 		WHERE
 			ou.user_id = @userID
 		LIMIT 1
@@ -83,12 +110,40 @@ func (r *OrganizationRepository) GetOrganizationByUserID(ctx context.Context, us
 	}
 
 	var org domain.Organization
-	err := r.DB.QueryRow(ctx, query, args).Scan(&org.ID, &org.Name, &org.CreatedBy, &org.CreatedAt)
+	var addr domain.Address
+	var addrID, addrOrgID *uuid.UUID
+	var zipCode, complement, publicPlace, city, state *string
+
+	err := r.DB.QueryRow(ctx, query, args).Scan(
+		&org.ID, &org.Name, &org.CreatedBy, &org.CreatedAt,
+		&addrID, &addrOrgID, &zipCode, &complement, &publicPlace, &city, &state,
+	)
 	if err != nil {
 		if err == pgx.ErrNoRows {
 			return domain.DBResponse{Success: false, Message: "usuário não pertence a nenhuma organização"}, nil
 		}
 		return domain.DBResponse{Success: false, Message: "erro ao buscar organização"}, err
+	}
+
+	if addrID != nil {
+		addr.ID = *addrID
+		addr.OrganizationID = *addrOrgID
+		if zipCode != nil {
+			addr.ZipCode = *zipCode
+		}
+		if complement != nil {
+			addr.Complement = *complement
+		}
+		if publicPlace != nil {
+			addr.PublicPlace = *publicPlace
+		}
+		if city != nil {
+			addr.City = *city
+		}
+		if state != nil {
+			addr.State = *state
+		}
+		org.Address = &addr
 	}
 
 	return domain.DBResponse{Success: true, Data: org}, nil
@@ -97,53 +152,120 @@ func (r *OrganizationRepository) GetOrganizationByUserID(ctx context.Context, us
 func (r *OrganizationRepository) GetByID(ctx context.Context, id uuid.UUID) (domain.DBResponse, error) {
 	const query = `
 		SELECT
-			id,
-			name,
-			created_by,
-			created_at
+			o.id,
+			o.name,
+			o.created_by,
+			o.created_at,
+			a.id,
+			a.organization_id,
+			a.zip_code,
+			a.complement,
+			a.public_place,
+			a.city,
+			a.state
 		FROM
-			organizations
+			organizations o
+		LEFT JOIN
+			addresses a ON o.id = a.organization_id
 		WHERE
-			id = @id
+			o.id = @id
 	`
 	args := pgx.StrictNamedArgs{
 		"id": id,
 	}
 
 	var org domain.Organization
-	err := r.DB.QueryRow(ctx, query, args).Scan(&org.ID, &org.Name, &org.CreatedBy, &org.CreatedAt)
+	var addr domain.Address
+	var addrID, addrOrgID *uuid.UUID
+	var zipCode, complement, publicPlace, city, state *string
+
+	err := r.DB.QueryRow(ctx, query, args).Scan(
+		&org.ID, &org.Name, &org.CreatedBy, &org.CreatedAt,
+		&addrID, &addrOrgID, &zipCode, &complement, &publicPlace, &city, &state,
+	)
+
 	if err != nil {
 		if err == pgx.ErrNoRows {
-			return domain.DBResponse{Message: "organização não encontrada"}, nil
+			return domain.DBResponse{Success: false, Message: "organização não encontrada"}, nil
 		}
-		return domain.DBResponse{Message: "erro ao buscar organização"}, err
+		return domain.DBResponse{Success: false, Message: "erro ao buscar organização"}, err
+	}
+
+	if addrID != nil {
+		addr.ID = *addrID
+		addr.OrganizationID = *addrOrgID
+		if zipCode != nil {
+			addr.ZipCode = *zipCode
+		}
+		if complement != nil {
+			addr.Complement = *complement
+		}
+		if publicPlace != nil {
+			addr.PublicPlace = *publicPlace
+		}
+		if city != nil {
+			addr.City = *city
+		}
+		if state != nil {
+			addr.State = *state
+		}
+		org.Address = &addr
 	}
 
 	return domain.DBResponse{Success: true, Data: org}, nil
 }
 
-func (r *OrganizationRepository) Update(ctx context.Context, id uuid.UUID, uo domain.UpdateOrganization) (domain.DBResponse, error) {
-	const query = `
-		UPDATE organizations
-		SET name = @name
-		WHERE id = @id
-	`
-	args := pgx.StrictNamedArgs{
-		"id":   id,
-		"name": uo.Name,
-	}
+func (r *OrganizationRepository) Update(ctx context.Context, orgID uuid.UUID, uo domain.UpdateOrganization) (domain.DBResponse, error) {
+	err := pgx.BeginFunc(ctx, r.DB, func(tx pgx.Tx) error {
+		const updateOrgQuery = `
+			UPDATE organizations
+			SET name = @name
+			WHERE id = @id
+		`
+		args := pgx.StrictNamedArgs{
+			"id":   orgID,
+			"name": uo.Name,
+		}
 
-	res, err := r.DB.Exec(ctx, query, args)
+		_, err := tx.Exec(ctx, updateOrgQuery, args)
+		if err != nil {
+			return err
+		}
+
+		// Upsert address
+		const upsertAddressQuery = `
+			INSERT INTO addresses (organization_id, zip_code, complement, public_place, city, state)
+			VALUES (@orgID, @zipCode, @complement, @publicPlace, @city, @state)
+			ON CONFLICT (organization_id) DO UPDATE
+			SET
+				zip_code = EXCLUDED.zip_code,
+				complement = EXCLUDED.complement,
+				public_place = EXCLUDED.public_place,
+				city = EXCLUDED.city,
+				state = EXCLUDED.state
+		`
+		addrArgs := pgx.StrictNamedArgs{
+			"orgID":       orgID,
+			"zipCode":     uo.ZipCode,
+			"complement":  uo.Complement,
+			"publicPlace": uo.PublicPlace,
+			"city":        uo.City,
+			"state":       uo.State,
+		}
+
+		_, err = tx.Exec(ctx, upsertAddressQuery, addrArgs)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
 	if err != nil {
-		return domain.DBResponse{Message: "erro ao atualizar organização"}, err
+		return domain.DBResponse{Success: false, Message: "erro ao atualizar organização"}, err
 	}
 
-	rows := res.RowsAffected()
-	if rows != 1 {
-		return domain.DBResponse{Message: "organização não encontrada"}, nil
-	}
-
-	return domain.DBResponse{Success: true}, nil
+	return domain.DBResponse{Success: true, Message: "organização atualizada com sucesso"}, nil
 }
 
 func (r *OrganizationRepository) Delete(ctx context.Context, id uuid.UUID) (domain.DBResponse, error) {

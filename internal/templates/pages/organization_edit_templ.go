@@ -9,6 +9,7 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
+	"fmt"
 	"github.com/marcelorc13/timesheet-pro/internal/domain"
 	"github.com/marcelorc13/timesheet-pro/internal/templates/layouts"
 )
@@ -46,46 +47,98 @@ func OrganizationEditPage(org domain.Organization, userName string) templ.Compon
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex min-h-screen flex-col items-center justify-center bg-gray-50 px-4 py-8\"><div class=\"w-full max-w-md\"><div class=\"mb-6\"><a href=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"flex min-h-screen flex-col items-center justify-center bg-gray-50 px-4 py-8\"><div class=\"w-full flex flex-col gap-6 max-w-md\"><div class=\"w-full rounded-2xl bg-white p-6 shadow-lg sm:p-8\"><div id=\"edit-message\" class=\"mb-4\"></div><div class=\"mb-6 text-center\"><div class=\"inline-flex items-center justify-center gap-2\"><span class=\"material-symbols-outlined text-3xl text-[var(--primary-color)] sm:text-4xl\">edit_square</span><h1 class=\"text-2xl font-bold text-gray-900 sm:text-3xl\">Editar Organização</h1></div></div><form class=\"space-y-6\" hx-put=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var3 templ.SafeURL
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/organizations/" + org.ID.String()))
+			var templ_7745c5c3_Var3 string
+			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("/api/v1/organizations/%s", org.ID.String()))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/organization_edit.templ`, Line: 13, Col: 61}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/organization_edit.templ`, Line: 30, Col: 71}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" class=\"inline-flex items-center text-sm text-gray-600 hover:text-gray-900\"><span class=\"material-symbols-outlined text-lg\">arrow_back</span> <span class=\"ml-1\">Voltar</span></a></div><div class=\"w-full rounded-2xl bg-white p-6 shadow-lg sm:p-8\"><div id=\"edit-message\" class=\"mb-4\"></div><div class=\"mb-6 text-center\"><div class=\"inline-flex items-center justify-center gap-2\"><span class=\"material-symbols-outlined text-3xl text-[var(--primary-color)] sm:text-4xl\">edit</span><h1 class=\"text-2xl font-bold text-gray-900 sm:text-3xl\">Editar Organização</h1></div></div><form class=\"space-y-6\" hx-put=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" hx-target=\"#edit-message\" hx-swap=\"innerHTML\" hx-trigger=\"submit\" hx-ext=\"json-enc\"><div><label class=\"block text-sm font-medium text-gray-700\" for=\"name\">Nome da Organização</label><div class=\"mt-1\"><input class=\"block w-full appearance-none rounded-md border border-gray-300 px-3 py-3 placeholder-gray-400 shadow-sm focus:border-[var(--primary-color)] focus:outline-none focus:ring-[var(--primary-color)] sm:text-sm\" id=\"name\" name=\"name\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var4 string
-			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs("/api/v1/organizations/" + org.ID.String())
+			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(org.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/organization_edit.templ`, Line: 30, Col: 57}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/organization_edit.templ`, Line: 44, Col: 25}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" hx-target=\"#edit-message\" hx-swap=\"innerHTML\" hx-ext=\"json-enc\"><div><label class=\"block text-sm font-medium text-gray-700\" for=\"name\">Nome da Organização</label><div class=\"mt-1\"><input class=\"block w-full appearance-none rounded-md border border-gray-300 px-3 py-3 \r\n\t\t\t\t\t\t\t\t\tplaceholder-gray-400 shadow-sm focus:border-[var(--primary-color)] focus:outline-none \r\n\t\t\t\t\t\t\t\t\tfocus:ring-[var(--primary-color)] sm:text-sm\" id=\"name\" name=\"name\" placeholder=\"Digite o nome da organização\" required=\"\" type=\"text\" minlength=\"3\" maxlength=\"100\" value=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\" required type=\"text\" minlength=\"3\" maxlength=\"100\"></div></div><div class=\"space-y-4 border-t border-gray-200 pt-4\"><h3 class=\"text-lg font-medium text-gray-900\">Endereço</h3><div class=\"grid grid-cols-1 gap-4 sm:grid-cols-2\"><div><label class=\"block text-sm font-medium text-gray-700\" for=\"zip_code\">CEP</label><div class=\"mt-1\"><input class=\"block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-[var(--primary-color)] focus:outline-none focus:ring-[var(--primary-color)] sm:text-sm\" id=\"zip_code\" name=\"zip_code\" value=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var5 string
-			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(org.Name)
+			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(org.Address.ZipCode)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/organization_edit.templ`, Line: 49, Col: 25}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/organization_edit.templ`, Line: 66, Col: 38}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\"></div><p class=\"mt-1 text-xs text-gray-500\">Mínimo 3 caracteres, máximo 100</p></div><div><button class=\"flex w-full justify-center rounded-md border border-transparent bg-[var(--primary-color)]\r\n\t\t\t\t\t\t\t\tpy-3 px-4 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2\r\n\t\t\t\t\t\t\t\tfocus:ring-blue-500 focus:ring-offset-2\" type=\"submit\">Salvar Alterações</button></div></form><div class=\"mt-6 text-center\"><p class=\"text-sm text-gray-600\">Apenas administradores podem editar a organização</p></div></div></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\" placeholder=\"00000-000\" required type=\"text\" onblur=\"checkCEP(this.value)\"></div></div><div><label class=\"block text-sm font-medium text-gray-700\" for=\"city\">Cidade</label><div class=\"mt-1\"><input class=\"block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 bg-gray-50 text-gray-600 sm:text-sm\" id=\"city\" name=\"city\" value=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var6 string
+			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(org.Address.City)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/organization_edit.templ`, Line: 83, Col: 35}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "\" required type=\"text\" readonly></div></div><div><label class=\"block text-sm font-medium text-gray-700\" for=\"state\">Estado</label><div class=\"mt-1\"><input class=\"block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 bg-gray-50 text-gray-600 sm:text-sm\" id=\"state\" name=\"state\" value=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var7 string
+			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(org.Address.State)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/organization_edit.templ`, Line: 99, Col: 36}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "\" required type=\"text\" readonly></div></div><div class=\"sm:col-span-2\"><label class=\"block text-sm font-medium text-gray-700\" for=\"public_place\">Logradouro</label><div class=\"mt-1\"><input class=\"block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 bg-gray-50 text-gray-600 sm:text-sm\" id=\"public_place\" name=\"public_place\" value=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var8 string
+			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(org.Address.PublicPlace)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/organization_edit.templ`, Line: 115, Col: 42}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "\" required type=\"text\" readonly></div></div><div class=\"sm:col-span-2\"><label class=\"block text-sm font-medium text-gray-700\" for=\"complement\">Complemento</label><div class=\"mt-1\"><input class=\"block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-[var(--primary-color)] focus:outline-none focus:ring-[var(--primary-color)] sm:text-sm\" id=\"complement\" name=\"complement\" value=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var9 string
+			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(org.Address.Complement)
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/organization_edit.templ`, Line: 131, Col: 41}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" placeholder=\"Apto, Sala, Bloco, etc.\" type=\"text\"></div></div></div></div><div><button class=\"flex w-full justify-center rounded-md border border-transparent bg-[var(--primary-color)] py-3 px-4 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2\" type=\"submit\">Salvar Alterações</button></div></form></div><script>\r\n\t\t\t\t\tfunction checkCEP(cep) {\r\n\t\t\t\t\t\tvar cleanCep = cep.replace(/\\D/g, '');\r\n\t\t\t\t\t\tif (cleanCep.length === 8) {\r\n\t\t\t\t\t\t\tdocument.getElementById('public_place').value = \"...\";\r\n\t\t\t\t\t\t\tfetch(`https://viacep.com.br/ws/${cleanCep}/json/`)\r\n\t\t\t\t\t\t\t\t.then(response => response.json())\r\n\t\t\t\t\t\t\t\t.then(data => {\r\n\t\t\t\t\t\t\t\t\tif (!data.erro) {\r\n\t\t\t\t\t\t\t\t\t\tdocument.getElementById('public_place').value = data.logradouro;\r\n\t\t\t\t\t\t\t\t\t\tdocument.getElementById('city').value = data.localidade;\r\n\t\t\t\t\t\t\t\t\t\tdocument.getElementById('state').value = data.uf;\r\n\t\t\t\t\t\t\t\t\t\tdocument.getElementById('complement').focus();\r\n\t\t\t\t\t\t\t\t\t} else {\r\n\t\t\t\t\t\t\t\t\t\talert(\"CEP não encontrado.\");\r\n\t\t\t\t\t\t\t\t\t\tdocument.getElementById('public_place').value = \"\";\r\n\t\t\t\t\t\t\t\t\t}\r\n\t\t\t\t\t\t\t\t})\r\n\t\t\t\t\t\t\t\t.catch(err => console.error(err));\r\n\t\t\t\t\t\t}\r\n\t\t\t\t\t}\r\n\t\t\t\t</script></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

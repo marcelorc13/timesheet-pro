@@ -14,15 +14,36 @@ type Organization struct {
 	Name      string    `json:"name"`
 	CreatedBy uuid.UUID `json:"created_by"`
 	CreatedAt time.Time `json:"created_at"`
+	Address   *Address  `json:"address,omitempty"`
+}
+
+type Address struct {
+	ID             uuid.UUID `json:"id"`
+	OrganizationID uuid.UUID `json:"organization_id"`
+	ZipCode        string    `json:"zip_code"`
+	Complement     string    `json:"complement"`
+	PublicPlace    string    `json:"public_place"`
+	City           string    `json:"city"`
+	State          string    `json:"state"`
 }
 
 type CreateOrganization struct {
-	UserID string `json:"user_id" form:"user_id" validate:"required"`
-	Name   string `json:"name" form:"name" validate:"required,min=3,max=100"`
+	UserID      string `json:"user_id" form:"user_id" validate:"required"`
+	Name        string `json:"name" form:"name" validate:"required,min=3,max=100"`
+	ZipCode     string `json:"zip_code" form:"zip_code" validate:"required"`
+	Complement  string `json:"complement" form:"complement" validate:"required"`
+	PublicPlace string `json:"public_place" form:"public_place" validate:"required"`
+	City        string `json:"city" form:"city" validate:"required"`
+	State       string `json:"state" form:"state" validate:"required"`
 }
 
 type UpdateOrganization struct {
-	Name string `json:"name" form:"name" validate:"required,min=3,max=100"`
+	Name        string `json:"name" form:"name" validate:"required,min=3,max=100"`
+	ZipCode     string `json:"zip_code" form:"zip_code" validate:"required"`
+	Complement  string `json:"complement" form:"complement" validate:"required"`
+	PublicPlace string `json:"public_place" form:"public_place" validate:"required"`
+	City        string `json:"city" form:"city" validate:"required"`
+	State       string `json:"state" form:"state" validate:"required"`
 }
 
 type AddUserToOrganization struct {
