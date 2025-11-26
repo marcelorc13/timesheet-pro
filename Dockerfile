@@ -28,8 +28,8 @@ RUN go install -ldflags="-s -w" -tags="no_libsql no_mssql no_vertica no_clickhou
 # Final stage - minimal production image
 FROM alpine:latest
 
-# Install ca-certificates and postgresql-client for HTTPS requests and database diagnostics
-RUN apk --no-cache add ca-certificates postgresql-client
+# Install ca-certificates for HTTPS requests
+RUN apk --no-cache add ca-certificates
 
 WORKDIR /root/
 
@@ -45,11 +45,6 @@ COPY --from=builder /app/internal/repository/migrations /app/migrations
 # Copy entrypoint script
 COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-
-# Copy diagnostic scripts for troubleshooting migrations
-COPY verify-db.sh /usr/local/bin/
-COPY reset-migrations.sh /usr/local/bin/
-RUN chmod +x /usr/local/bin/verify-db.sh /usr/local/bin/reset-migrations.sh
 
 # Expose port (Render uses PORT env variable)
 EXPOSE 8080

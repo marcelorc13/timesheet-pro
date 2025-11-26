@@ -68,18 +68,6 @@ The blueprint will automatically configure most environment variables, but you m
 - Check logs for specific migration errors
 - Fix the issue and redeploy
 
-**Troubleshooting migrations:**
-
-If migrations appear complete in logs but your app has database errors, use the diagnostic tools:
-
-```bash
-# In Render Shell
-sh verify-db.sh    # Check actual database state
-sh reset-migrations.sh  # Reset and re-run (deletes all data!)
-```
-
-See [MIGRATION_TROUBLESHOOTING.md](file:///wsl.localhost/Ubuntu/home/marcelo/codigos/timesheet-pro/MIGRATION_TROUBLESHOOTING.md) for details.
-
 ---
 
 ## Option 2: Manual Deployment
