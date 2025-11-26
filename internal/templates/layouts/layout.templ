@@ -36,9 +36,10 @@ templ Base(title string, userName string) {
 								<h1 class="text-2xl font-bold text-gray-900">TimeSheet PRO</h1>
 							</a>
 							<div class="flex items-center gap-4">
-								<span class="text-sm text-gray-700">
-									Olá, <span class="font-semibold">{ userName }</span>
-								</span>
+								<a href="/profile" class="inline-flex items-center gap-1 rounded-md bg-white px-3 py-1.5 text-sm font-semibold text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+									<span class="material-symbols-outlined text-base">person</span>
+									Perfil
+								</a>
 								<a href="/logout" class="inline-flex items-center gap-1 rounded-md bg-red-600 px-2 py-1 text-sm font-semibold text-white shadow-sm hover:bg-red-700">
 									<span class="material-symbols-outlined text-base">logout</span>
 								</a>

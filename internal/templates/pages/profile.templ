@@ -1,0 +1,107 @@
+package pages
+
+import (
+	"github.com/marcelorc13/timesheet-pro/internal/templates/layouts"
+	"github.com/marcelorc13/timesheet-pro/internal/domain"
+)
+
+templ ProfilePage(user domain.User, userName string) {
+	@layouts.Base("Meu Perfil", userName) {
+		<div class="min-h-screen bg-gray-50">
+			<main class="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+				<!-- Header -->
+				<div class="mb-8">
+					<h1 class="text-3xl font-bold text-gray-900">Meu Perfil</h1>
+					<p class="mt-2 text-sm text-gray-600">Gerencie suas informações pessoais</p>
+				</div>
+
+				<!-- Profile Card -->
+				<div class="overflow-hidden rounded-lg bg-white shadow">
+					<div class="border-b border-gray-200 px-6 py-4">
+						<h2 class="text-lg font-semibold text-gray-900">Informações Pessoais</h2>
+					</div>
+					
+					<form 
+						hx-put={ "/api/v1/users/" + user.ID.String() }
+						hx-ext="json-enc"
+						hx-swap="none"
+						hx-on::after-success="showSuccess()"
+						hx-on::after-error="showError(event)"
+						class="px-6 py-6 space-y-6"
+					>
+						<!-- Name Field -->
+						<div>
+							<label for="name" class="block text-sm font-medium text-gray-700">
+								Nome
+							</label>
+							<input
+								type="text"
+								id="name"
+								name="name"
+								value={ user.Name }
+								required
+								class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+							/>
+						</div>
+
+						<!-- Email Field -->
+						<div>
+							<label for="email" class="block text-sm font-medium text-gray-700">
+								E-mail
+							</label>
+							<input
+								type="email"
+								id="email"
+								name="email"
+								value={ user.Email }
+								required
+								class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 sm:text-sm"
+							/>
+						</div>
+
+						<!-- Success/Error Messages -->
+						<div id="message" class="hidden"></div>
+
+						<!-- Buttons -->
+						<div class="flex justify-end gap-3">
+							<a
+								href="/"
+								class="inline-flex items-center gap-2 rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+							>
+								Cancelar
+							</a>
+							<button
+								type="submit"
+								class="inline-flex items-center gap-2 rounded-md bg-[var(--primary-color)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+							>
+								<span class="material-symbols-outlined text-lg">save</span>
+								Salvar Alterações
+							</button>
+						</div>
+					</form>
+				</div>
+			</main>
+		</div>
+
+		<script>
+		function showSuccess() {
+			const msg = document.getElementById('message');
+			msg.className = 'rounded-md bg-green-50 p-4';
+			msg.innerHTML = '<div class="flex"><span class="material-symbols-outlined text-green-400 mr-3">check_circle</span><p class="text-sm text-green-800">Perfil atualizado com sucesso!</p></div>';
+			setTimeout(() => {
+				msg.className = 'hidden';
+			}, 3000);
+		}
+
+		function showError(event) {
+			const msg = document.getElementById('message');
+			const response = JSON.parse(event.detail.xhr.response);
+			msg.className = 'rounded-md bg-red-50 p-4';
+			msg.innerHTML = '<div class="flex"><span class="material-symbols-outlined text-red-400 mr-3">error</span><p class="text-sm text-red-800">' + (response.message || 'Erro ao atualizar perfil') + '</p></div>';
+			setTimeout(() => {
+				msg.className = 'hidden';
+			}, 5000);
+		}
+		</script>
+	}
+}

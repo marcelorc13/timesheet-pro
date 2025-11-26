@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"github.com/marcelorc13/timesheet-pro/internal/domain"
 	service "github.com/marcelorc13/timesheet-pro/internal/services"
 	"github.com/marcelorc13/timesheet-pro/internal/utils"
@@ -115,4 +116,89 @@ func (h UserHandler) Login(c *gin.Context) {
 	c.SetCookie("token", token, 3600, "/", "localhost", false, true)
 	c.Header("HX-Redirect", "/")
 	c.JSON(http.StatusOK, domain.HttpResponse{Status: http.StatusOK, Message: "Login bem-sucedido"})
+}
+
+// GetMyProfile gets the current user's profile from JWT token
+func (h UserHandler) GetMyProfile(c *gin.Context) {
+	tokenString, err := c.Cookie("token")
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, domain.HttpResponse{Status: http.StatusUnauthorized, Message: "Token não encontrado"})
+		return
+	}
+
+	claims, err := utils.GetTokenClaims(tokenString)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, domain.HttpResponse{Status: http.StatusUnauthorized, Message: "Token inválido"})
+		return
+	}
+
+	userIDStr, ok := claims["id"].(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, domain.HttpResponse{Status: http.StatusUnauthorized, Message: "Token inválido"})
+		return
+	}
+
+	user, err := h.service.GetByID(c.Request.Context(), userIDStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.HttpResponse{Status: http.StatusBadRequest, Message: err.Error()})
+		return
+	}
+
+	if user == nil {
+		c.JSON(http.StatusNotFound, domain.HttpResponse{Status: http.StatusNotFound, Message: "Usuário não encontrado"})
+		return
+	}
+
+	// Don't send password in response
+	user.Password = ""
+	c.JSON(http.StatusOK, domain.HttpResponse{Status: http.StatusOK, Data: user})
+}
+
+// UpdateMyProfile updates the current user's profile
+func (h UserHandler) UpdateMyProfile(c *gin.Context) {
+	tokenString, err := c.Cookie("token")
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, domain.HttpResponse{Status: http.StatusUnauthorized, Message: "Token não encontrado"})
+		return
+	}
+
+	claims, err := utils.GetTokenClaims(tokenString)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, domain.HttpResponse{Status: http.StatusUnauthorized, Message: "Token inválido"})
+		return
+	}
+
+	userIDStr, ok := claims["id"].(string)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, domain.HttpResponse{Status: http.StatusUnauthorized, Message: "Token inválido"})
+		return
+	}
+
+	var req struct {
+		Name  string `json:"name" form:"name" binding:"required"`
+		Email string `json:"email" form:"email" binding:"required,email"`
+	}
+
+
+	if err = c.ShouldBind(&req); err != nil {
+		c.JSON(http.StatusBadRequest, domain.HttpResponse{Status: http.StatusBadRequest, Message: "Dados inválidos: " + err.Error()})
+		return
+	}
+
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.HttpResponse{Status: http.StatusBadRequest, Message: "ID inválido"})
+		return
+	}
+
+	updatedUser, err := h.service.UpdateProfile(c.Request.Context(), userID, req.Name, req.Email)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, domain.HttpResponse{Status: http.StatusBadRequest, Message: err.Error()})
+		return
+	}
+
+	// Don't send password
+	updatedUser.Password = ""
+	c.Header("HX-Redirect", "/")
+	c.JSON(http.StatusOK, domain.HttpResponse{Status: http.StatusOK, Message: "Perfil atualizado com sucesso", Data: updatedUser})
 }

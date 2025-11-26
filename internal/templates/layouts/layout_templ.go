@@ -47,20 +47,7 @@ func Base(title string, userName string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if userName != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"bg-white shadow\"><div class=\"mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8\"><div class=\"flex items-center justify-between\"><a href=\"/\" class=\"flex items-center gap-3\"><span class=\"material-symbols-outlined text-3xl text-[var(--primary-color)]\">pending_actions</span><h1 class=\"text-2xl font-bold text-gray-900\">TimeSheet PRO</h1></a><div class=\"flex items-center gap-4\"><span class=\"text-sm text-gray-700\">Olá, <span class=\"font-semibold\">")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(userName)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/layouts/layout.templ`, Line: 40, Col: 53}
-			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</span></span> <a href=\"/logout\" class=\"inline-flex items-center gap-1 rounded-md bg-red-600 px-2 py-1 text-sm font-semibold text-white shadow-sm hover:bg-red-700\"><span class=\"material-symbols-outlined text-base\">logout</span></a></div></div></div></header>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"bg-white shadow\"><div class=\"mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8\"><div class=\"flex items-center justify-between\"><a href=\"/\" class=\"flex items-center gap-3\"><span class=\"material-symbols-outlined text-3xl text-[var(--primary-color)]\">pending_actions</span><h1 class=\"text-2xl font-bold text-gray-900\">TimeSheet PRO</h1></a><div class=\"flex items-center gap-4\"><a href=\"/profile\" class=\"inline-flex items-center gap-1 rounded-md bg-white px-3 py-1.5 text-sm font-semibold text-gray-700 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50\"><span class=\"material-symbols-outlined text-base\">person</span> Perfil</a> <a href=\"/logout\" class=\"inline-flex items-center gap-1 rounded-md bg-red-600 px-2 py-1 text-sm font-semibold text-white shadow-sm hover:bg-red-700\"><span class=\"material-symbols-outlined text-base\">logout</span></a></div></div></div></header>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -69,7 +56,7 @@ func Base(title string, userName string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -118,3 +118,47 @@ func (us UserService) Login(ctx context.Context, u domain.LoginUser) (*domain.Us
 
 	return &usuario, nil
 }
+
+// UpdateProfile updates a user's profile information
+func (us UserService) UpdateProfile(ctx context.Context, userID uuid.UUID, name, email string) (*domain.User, error) {
+	// Validate name is not empty
+	if name == "" {
+		return nil, fmt.Errorf("nome não pode ser vazio")
+	}
+	
+	// Validate email format
+	validate := validator.New()
+	if err := validate.Var(email, "required,email"); err != nil {
+		return nil, fmt.Errorf("email inválido")
+	}
+	
+	// Check if email is already in use by another user
+	existingRes, err := us.repository.GetByEmail(ctx, email)
+	if err != nil {
+		return nil, err
+	}
+	
+	if existingRes.Success {
+		existingUser, ok := existingRes.Data.(domain.User)
+		if ok && existingUser.ID != userID {
+			return nil, fmt.Errorf("email já está em uso")
+		}
+	}
+	
+	// Update user
+	res, err := us.repository.UpdateUser(ctx, userID.String(), name, email)
+	if err != nil {
+		return nil, err
+	}
+	
+	if !res.Success {
+		return nil, fmt.Errorf("%s", res.Message)
+	}
+	
+	updatedUser, ok := res.Data.(domain.User)
+	if !ok {
+		return nil, fmt.Errorf("erro ao converter dados")
+	}
+	
+	return &updatedUser, nil
+}

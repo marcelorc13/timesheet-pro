@@ -45,9 +45,10 @@ func main() {
 	// View handlers
 	ovh := views.NewOrganizationViewHandler(*os, *us)
 	tvh := views.NewTimesheetViewHandler(ts, os)
+	pvh := views.NewProfileViewHandler(us)
 
 	router.APIRoutes(*uh, *oh, *th)
-	router.ViewsRoutes(*ovh, *tvh, or)
+	router.ViewsRoutes(*ovh, *tvh, *pvh, or)
 
 	router.Start()
 }

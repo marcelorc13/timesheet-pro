@@ -125,3 +125,25 @@ func (r *UserRepository) GetByEmail(ctx context.Context, email string) (domain.D
 	}
 	return domain.DBResponse{Success: true, Data: user}, nil
 }
+
+// UpdateUser updates a user's name and email
+func (r *UserRepository) UpdateUser(ctx context.Context, userID, name, email string) (domain.DBResponse, error) {
+	const query = `
+		UPDATE users 
+		SET name = $1, email = $2
+		WHERE id = $3
+		RETURNING id, name, email
+	`
+	
+	var updatedUser domain.User
+	err := r.DB.QueryRow(ctx, query, name, email, userID).
+		Scan(&updatedUser.ID, &updatedUser.Name, &updatedUser.Email)
+	
+	if err == sql.ErrNoRows {
+		return domain.DBResponse{Message: "usuário não encontrado"}, nil
+	} else if err != nil {
+		return domain.DBResponse{Message: err.Error()}, err
+	}
+	
+	return domain.DBResponse{Success: true, Data: updatedUser}, nil
+}

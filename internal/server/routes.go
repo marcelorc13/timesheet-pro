@@ -21,6 +21,7 @@ func (r Router) APIRoutes(uh api.UserHandler, oh api.OrganizationHandler, th api
 	userRoutes.GET("/", uh.List)
 	userRoutes.GET("/:id", uh.GetByID)
 	userRoutes.DELETE("/:id", uh.Delete)
+	userRoutes.PUT("/:id", uh.UpdateMyProfile)
 	userRoutes.POST("/", uh.Create)
 	userRoutes.POST("/login", uh.Login)
 
@@ -46,7 +47,7 @@ func (r Router) APIRoutes(uh api.UserHandler, oh api.OrganizationHandler, th api
 	// http://localhost:port/swagger/index.html
 }
 
-func (r Router) ViewsRoutes(ovh views.OrganizationViewHandler, tvh views.TimesheetViewHandler, orgRepo *repository.OrganizationRepository) {
+func (r Router) ViewsRoutes(ovh views.OrganizationViewHandler, tvh views.TimesheetViewHandler, pvh views.ProfileViewHandler, orgRepo *repository.OrganizationRepository) {
 	viewsRouter := r.Router.Group("/")
 
 	viewsRouter.GET("/signup", views.SignupHandler)
@@ -67,4 +68,6 @@ func (r Router) ViewsRoutes(ovh views.OrganizationViewHandler, tvh views.Timeshe
 	
 	// Timesheet view routes (authenticated)
 	authRoutes.GET("/timesheet", tvh.TimesheetPageHandler)
+
+	authRoutes.GET("/profile", pvh.ProfilePageHandler)
 }
