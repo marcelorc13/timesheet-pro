@@ -135,3 +135,7 @@ Acesse: `http://localhost:8080`
 3.  Faça o Commit (`git commit -m 'Adicionando funcionalidade X'`)
 4.  Faça o Push (`git push origin feature/MinhaFeature`)
 5.  Abra um Pull Request
+
+## 🧍 UML de Caso de Uso
+
+![Foto](docs/uml/UML_use_case_timesheet_pro.drawio.png)
