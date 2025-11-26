@@ -13,7 +13,7 @@ import (
 	"github.com/marcelorc13/timesheet-pro/internal/templates/layouts"
 )
 
-func AdminTimesheetPage(org domain.Organization, members []domain.OrganizationUser, userName string) templ.Component {
+func AdminTimesheetPage(org domain.Organization, timesheets []domain.UserTimesheet, userName string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
 		if templ_7745c5c3_CtxErr := ctx.Err(); templ_7745c5c3_CtxErr != nil {
@@ -46,75 +46,143 @@ func AdminTimesheetPage(org domain.Organization, members []domain.OrganizationUs
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"min-h-screen bg-gray-50\"><main class=\"mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8\"><!-- Header --><div class=\"mb-8\"><a href=\"/\" class=\"inline-flex items-center text-sm text-gray-600 hover:text-gray-900\"><span class=\"material-symbols-outlined text-lg\">arrow_back</span> <span class=\"ml-1\">Voltar</span></a><h1 class=\"mt-4 text-3xl font-bold text-gray-900\">Gerenciar Pontos</h1><p class=\"mt-2 text-sm text-gray-600\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"min-h-screen bg-gray-50\"><main class=\"mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8\"><!-- Header --><div class=\"mb-8\"><a href=\"/\" class=\"inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-4\"><span class=\"material-symbols-outlined text-lg\">arrow_back</span> <span class=\"ml-1\">Voltar</span></a><h1 class=\"text-3xl font-bold text-gray-900\">Pontos da Equipe</h1></div><!-- Timesheets List -->")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			var templ_7745c5c3_Var3 string
-			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(org.Name)
-			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/admin_timesheets.templ`, Line: 19, Col: 53}
+			if len(timesheets) > 0 {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"space-y-4\">")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+				for _, timesheet := range timesheets {
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<div class=\"overflow-hidden rounded-lg bg-white shadow\"><div class=\"border-b border-gray-200 px-4 py-3 sm:px-6\"><div class=\"flex items-center justify-between\"><div class=\"flex items-center gap-3\"><div class=\"flex h-10 w-10 items-center justify-center rounded-full bg-gray-100\"><span class=\"material-symbols-outlined text-gray-600\">person</span></div><div><h3 class=\"text-base font-semibold text-gray-900\">")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var3 string
+					templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(timesheet.UserName)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/admin_timesheets.templ`, Line: 33, Col: 82}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</h3><p class=\"text-xs text-gray-500\">")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var4 string
+					templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(timesheet.UserEmail)
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/admin_timesheets.templ`, Line: 34, Col: 66}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</p></div></div><span class=\"text-sm text-gray-500\">")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					var templ_7745c5c3_Var5 string
+					templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(len(timesheet.Entries))
+					if templ_7745c5c3_Err != nil {
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/admin_timesheets.templ`, Line: 37, Col: 70}
+					}
+					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, " registro(s)</span></div></div>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+					if len(timesheet.Entries) > 0 {
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<ul class=\"divide-y divide-gray-100\">")
+						if templ_7745c5c3_Err != nil {
+							return templ_7745c5c3_Err
+						}
+						for _, entry := range timesheet.Entries {
+							templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<li class=\"px-4 py-4 sm:px-6\"><div class=\"flex items-center gap-3\">")
+							if templ_7745c5c3_Err != nil {
+								return templ_7745c5c3_Err
+							}
+							if entry.TypeID == domain.EntryTypeIn {
+								templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"flex h-10 w-10 items-center justify-center rounded-full bg-green-100\"><span class=\"material-symbols-outlined text-green-600\">login</span></div><div><p class=\"text-sm font-medium text-gray-900\">Entrada</p><p class=\"text-xs text-gray-500\">")
+								if templ_7745c5c3_Err != nil {
+									return templ_7745c5c3_Err
+								}
+								var templ_7745c5c3_Var6 string
+								templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(entry.Timestamp.Format("15:04:05"))
+								if templ_7745c5c3_Err != nil {
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/admin_timesheets.templ`, Line: 52, Col: 84}
+								}
+								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
+								if templ_7745c5c3_Err != nil {
+									return templ_7745c5c3_Err
+								}
+								templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</p></div>")
+								if templ_7745c5c3_Err != nil {
+									return templ_7745c5c3_Err
+								}
+							} else {
+								templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<div class=\"flex h-10 w-10 items-center justify-center rounded-full bg-red-100\"><span class=\"material-symbols-outlined text-red-600\">logout</span></div><div><p class=\"text-sm font-medium text-gray-900\">Saída</p><p class=\"text-xs text-gray-500\">")
+								if templ_7745c5c3_Err != nil {
+									return templ_7745c5c3_Err
+								}
+								var templ_7745c5c3_Var7 string
+								templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(entry.Timestamp.Format("15:04:05"))
+								if templ_7745c5c3_Err != nil {
+									return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/admin_timesheets.templ`, Line: 60, Col: 84}
+								}
+								_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
+								if templ_7745c5c3_Err != nil {
+									return templ_7745c5c3_Err
+								}
+								templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "</p></div>")
+								if templ_7745c5c3_Err != nil {
+									return templ_7745c5c3_Err
+								}
+							}
+							templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "</div></li>")
+							if templ_7745c5c3_Err != nil {
+								return templ_7745c5c3_Err
+							}
+						}
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</ul>")
+						if templ_7745c5c3_Err != nil {
+							return templ_7745c5c3_Err
+						}
+					} else {
+						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div class=\"px-4 py-8 text-center\"><p class=\"text-sm text-gray-500\">Nenhum registro hoje</p></div>")
+						if templ_7745c5c3_Err != nil {
+							return templ_7745c5c3_Err
+						}
+					}
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "</div>")
+					if templ_7745c5c3_Err != nil {
+						return templ_7745c5c3_Err
+					}
+				}
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "</div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
+			} else {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<div class=\"rounded-lg bg-white p-12 text-center shadow\"><span class=\"material-symbols-outlined mx-auto text-4xl text-gray-400\">event_busy</span><h3 class=\"mt-2 text-sm font-semibold text-gray-900\">Nenhum registro hoje</h3><p class=\"mt-1 text-sm text-gray-500\">Não há registros de ponto para hoje.</p></div>")
+				if templ_7745c5c3_Err != nil {
+					return templ_7745c5c3_Err
+				}
 			}
-			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "</p></div><!-- User Selection Card --><div class=\"mb-8 overflow-hidden rounded-lg bg-white shadow\"><div class=\"p-6\"><h2 class=\"text-lg font-semibold text-gray-900 mb-4\">Selecionar Funcionário</h2><div class=\"grid grid-cols-1 gap-4 sm:grid-cols-3\"><!-- User Selection --><div><label for=\"userId\" class=\"block text-sm font-medium text-gray-700\">Funcionário</label> <select id=\"userId\" name=\"userId\" class=\"mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm\"><option value=\"\">Selecione um funcionário</option> ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			for _, member := range members {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<option value=\"")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var4 string
-				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(member.UserID.String())
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/admin_timesheets.templ`, Line: 38, Col: 48}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "\">")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var5 string
-				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(member.Name)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/admin_timesheets.templ`, Line: 38, Col: 64}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, " (")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				var templ_7745c5c3_Var6 string
-				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(member.Email)
-				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/admin_timesheets.templ`, Line: 38, Col: 82}
-				}
-				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, ")</option>")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "</select></div><!-- Start Date --><div><label for=\"startDate\" class=\"block text-sm font-medium text-gray-700\">Data Inicial</label> <input type=\"date\" id=\"startDate\" name=\"startDate\" class=\"mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm\"></div><!-- End Date --><div><label for=\"endDate\" class=\"block text-sm font-medium text-gray-700\">Data Final</label> <input type=\"date\" id=\"endDate\" name=\"endDate\" class=\"mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm\"></div></div><div class=\"mt-4\"><button type=\"button\" onclick=\"loadTimesheets()\" class=\"inline-flex items-center gap-2 rounded-md bg-[var(--primary-color)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700\"><span class=\"material-symbols-outlined text-lg\">search</span> Buscar Pontos</button></div></div></div><!-- Timesheets Container --><div id=\"timesheets-container\"><div class=\"rounded-lg bg-white p-12 text-center shadow\"><span class=\"material-symbols-outlined mx-auto text-4xl text-gray-400\">event_note</span><h3 class=\"mt-2 text-sm font-semibold text-gray-900\">Nenhum funcionário selecionado</h3><p class=\"mt-1 text-sm text-gray-500\">Selecione um funcionário e um período para visualizar os registros de ponto.</p></div></div></main></div><script>\r\n\t\t\t// Set default dates (last 30 days)\r\n\t\t\tconst endDate = new Date();\r\n\t\t\tconst startDate = new Date();\r\n\t\t\tstartDate.setDate(startDate.getDate() - 30);\r\n\t\t\t\r\n\t\t\tdocument.getElementById('endDate').valueAsDate = endDate;\r\n\t\t\tdocument.getElementById('startDate').valueAsDate = startDate;\r\n\r\n\t\t\tfunction loadTimesheets() {\r\n\t\t\t\tconst userId = document.getElementById('userId').value;\r\n\t\t\t\tconst start = document.getElementById('startDate').value;\r\n\t\t\t\tconst end = document.getElementById('endDate').value;\r\n\r\n\t\t\t\tif (!userId) {\r\n\t\t\t\t\tdocument.getElementById('timesheets-container').innerHTML = `\r\n\t\t\t\t\t\t<div class=\"rounded-lg bg-white p-12 text-center shadow\">\r\n\t\t\t\t\t\t\t<span class=\"material-symbols-outlined mx-auto text-4xl text-gray-400\">person</span>\r\n\t\t\t\t\t\t\t<h3 class=\"mt-2 text-sm font-semibold text-gray-900\">Selecione um funcionário</h3>\r\n\t\t\t\t\t\t\t<p class=\"mt-1 text-sm text-gray-500\">Por favor, selecione um funcionário para visualizar os registros.</p>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t`;\r\n\t\t\t\t\treturn;\r\n\t\t\t\t}\r\n\r\n\t\t\t\t// Show loading state\r\n\t\t\t\tdocument.getElementById('timesheets-container').innerHTML = `\r\n\t\t\t\t\t<div class=\"rounded-lg bg-white p-12 text-center shadow\">\r\n\t\t\t\t\t\t<div class=\"inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent\"></div>\r\n\t\t\t\t\t\t<h3 class=\"mt-2 text-sm font-semibold text-gray-900\">Carregando...</h3>\r\n\t\t\t\t\t</div>\r\n\t\t\t\t`;\r\n\r\n\t\t\t\t// Build URL\r\n\t\t\t\tconst url = `/api/v1/organizations/${org.ID.String()}/users/${userId}/timesheets?start=${start}&end=${end}`;\r\n\r\n\t\t\t\t// Fetch timesheets\r\n\t\t\t\tfetch(url, {\r\n\t\t\t\t\tcredentials: 'same-origin'\r\n\t\t\t\t})\r\n\t\t\t\t.then(response => response.json())\r\n\t\t\t\t.then(data => {\r\n\t\t\t\t\tif (data.data && data.data.length > 0) {\r\n\t\t\t\t\t\trenderTimesheets(data.data);\r\n\t\t\t\t\t} else {\r\n\t\t\t\t\t\tdocument.getElementById('timesheets-container').innerHTML = `\r\n\t\t\t\t\t\t\t<div class=\"rounded-lg bg-white p-12 text-center shadow\">\r\n\t\t\t\t\t\t\t\t<span class=\"material-symbols-outlined mx-auto text-4xl text-gray-400\">event_busy</span>\r\n\t\t\t\t\t\t\t\t<h3 class=\"mt-2 text-sm font-semibold text-gray-900\">Nenhum registro encontrado</h3>\r\n\t\t\t\t\t\t\t\t<p class=\"mt-1 text-sm text-gray-500\">Não há registros de ponto para este funcionário no período selecionado.</p>\r\n\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t`;\r\n\t\t\t\t\t}\r\n\t\t\t\t})\r\n\t\t\t\t.catch(error => {\r\n\t\t\t\t\tdocument.getElementById('timesheets-container').innerHTML = `\r\n\t\t\t\t\t\t<div class=\"rounded-lg bg-white p-12 text-center shadow\">\r\n\t\t\t\t\t\t\t<span class=\"material-symbols-outlined mx-auto text-4xl text-red-400\">error</span>\r\n\t\t\t\t\t\t\t<h3 class=\"mt-2 text-sm font-semibold text-gray-900\">Erro ao carregar</h3>\r\n\t\t\t\t\t\t\t<p class=\"mt-1 text-sm text-gray-500\">Ocorreu um erro ao buscar os registros. Tente novamente.</p>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t`;\r\n\t\t\t\t});\r\n\t\t\t}\r\n\r\n\t\t\tfunction renderTimesheets(timesheets) {\r\n\t\t\t\tconst container = document.getElementById('timesheets-container');\r\n\t\t\t\tlet html = '<div class=\"space-y-4\">';\r\n\r\n\t\t\t\ttimesheets.forEach(timesheet => {\r\n\t\t\t\t\tconst date = new Date(timesheet.date).toLocaleDateString('pt-BR');\r\n\t\t\t\t\t\r\n\t\t\t\t\thtml += `\r\n\t\t\t\t\t\t<div class=\"overflow-hidden rounded-lg bg-white shadow\">\r\n\t\t\t\t\t\t\t<div class=\"border-b border-gray-200 px-4 py-3 sm:px-6\">\r\n\t\t\t\t\t\t\t\t<div class=\"flex items-center justify-between\">\r\n\t\t\t\t\t\t\t\t\t<h3 class=\"text-base font-semibold text-gray-900\">${date}</h3>\r\n\t\t\t\t\t\t\t\t\t<span class=\"text-sm text-gray-500\">${timesheet.entries.length} registro(s)</span>\r\n\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t<ul class=\"divide-y divide-gray-100\">\r\n\t\t\t\t\t`;\r\n\r\n\t\t\t\t\tif (timesheet.entries && timesheet.entries.length > 0) {\r\n\t\t\t\t\t\ttimesheet.entries.forEach(entry => {\r\n\t\t\t\t\t\t\tconst time = new Date(entry.timestamp).toLocaleTimeString('pt-BR');\r\n\t\t\t\t\t\t\tconst isIn = entry.type_id === 1;\r\n\t\t\t\t\t\t\tconst icon = isIn ? 'login' : 'logout';\r\n\t\t\t\t\t\t\tconst color = isIn ? 'green' : 'red';\r\n\t\t\t\t\t\t\tconst type = isIn ? 'Entrada' : 'Saída';\r\n\r\n\t\t\t\t\t\t\thtml += `\r\n\t\t\t\t\t\t\t\t<li class=\"px-4 py-4 sm:px-6\">\r\n\t\t\t\t\t\t\t\t\t<div class=\"flex items-center gap-3\">\r\n\t\t\t\t\t\t\t\t\t\t<div class=\"flex h-10 w-10 items-center justify-center rounded-full bg-${color}-100\">\r\n\t\t\t\t\t\t\t\t\t\t\t<span class=\"material-symbols-outlined text-${color}-600\">${icon}</span>\r\n\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t\t<div>\r\n\t\t\t\t\t\t\t\t\t\t\t<p class=\"text-sm font-medium text-gray-900\">${type}</p>\r\n\t\t\t\t\t\t\t\t\t\t\t<p class=\"text-xs text-gray-500\">${time}</p>\r\n\t\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t\t</div>\r\n\t\t\t\t\t\t\t\t</li>\r\n\t\t\t\t\t\t\t`;\r\n\t\t\t\t\t\t});\r\n\t\t\t\t\t} else {\r\n\t\t\t\t\t\thtml += `\r\n\t\t\t\t\t\t\t<li class=\"px-4 py-8 text-center\">\r\n\t\t\t\t\t\t\t\t<p class=\"text-sm text-gray-500\">Nenhum registro neste dia</p>\r\n\t\t\t\t\t\t\t</li>\r\n\t\t\t\t\t\t`;\r\n\t\t\t\t\t}\r\n\r\n\t\t\t\t\thtml += `\r\n\t\t\t\t\t\t\t</ul>\r\n\t\t\t\t\t\t</div>\r\n\t\t\t\t\t`;\r\n\t\t\t\t});\r\n\r\n\t\t\t\thtml += '</div>';\r\n\t\t\t\tcontainer.innerHTML = html;\r\n\t\t\t}\r\n\t\t</script>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</main></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = layouts.Base("Gerenciar Pontos - "+org.Name, userName).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = layouts.Base("Pontos da Equipe - "+org.Name, userName).Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

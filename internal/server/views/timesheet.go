@@ -11,6 +11,7 @@ import (
 	service "github.com/marcelorc13/timesheet-pro/internal/services"
 	"github.com/marcelorc13/timesheet-pro/internal/templates/pages"
 	"github.com/marcelorc13/timesheet-pro/internal/utils"
+	"github.com/marcelorc13/timesheet-pro/internal/domain"
 )
 
 type TimesheetViewHandler struct {
@@ -81,7 +82,7 @@ func (h *TimesheetViewHandler) TimesheetPageHandler(c *gin.Context) {
 	utils.Render(c.Request.Context(), c.Writer, pages.TimesheetPage(*org, timesheet, status, lastTimestampStr, userName))
 }
 
-// AdminTimesheetPageHandler shows admin view of all user timesheets
+// AdminTimesheetPageHandler shows admin view of all organization timesheets
 func (h *TimesheetViewHandler) AdminTimesheetPageHandler(c *gin.Context) {
 	// Get user ID from JWT token
 	tokenString, err := c.Cookie("token")
@@ -128,12 +129,12 @@ func (h *TimesheetViewHandler) AdminTimesheetPageHandler(c *gin.Context) {
 		return
 	}
 
-	// Get all members of the organization
-	members, err := h.orgServ.GetMembers(c.Request.Context(), org.ID)
+	// Get all timesheets for today
+	today := time.Now().Truncate(24 * time.Hour)
+	timesheets, err := h.timesheetServ.GetOrganizationTimesheets(c.Request.Context(), userID, org.ID, today)
 	if err != nil {
-		c.String(http.StatusInternalServerError, "Erro ao buscar membros")
-		return
+		timesheets = []domain.UserTimesheet{}
 	}
 
-	utils.Render(c.Request.Context(), c.Writer, pages.AdminTimesheetPage(*org, *members, userName))
+	utils.Render(c.Request.Context(), c.Writer, pages.AdminTimesheetPage(*org, timesheets, userName))
 }

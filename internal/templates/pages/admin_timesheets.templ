@@ -5,210 +5,81 @@ import (
 	"github.com/marcelorc13/timesheet-pro/internal/domain"
 )
 
-templ AdminTimesheetPage(org domain.Organization, members []domain.OrganizationUser, userName string) {
-	@layouts.Base("Gerenciar Pontos - " + org.Name, userName) {
+templ AdminTimesheetPage(org domain.Organization, timesheets []domain.UserTimesheet, userName string) {
+	@layouts.Base("Pontos da Equipe - " + org.Name, userName) {
 		<div class="min-h-screen bg-gray-50">
 			<main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
 				<!-- Header -->
 				<div class="mb-8">
-					<a href="/" class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900">
+					<a href="/" class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-4">
 						<span class="material-symbols-outlined text-lg">arrow_back</span>
 						<span class="ml-1">Voltar</span>
 					</a>
-					<h1 class="mt-4 text-3xl font-bold text-gray-900">Gerenciar Pontos</h1>
-					<p class="mt-2 text-sm text-gray-600">{ org.Name }</p>
+					<h1 class="text-3xl font-bold text-gray-900">Pontos da Equipe</h1>
 				</div>
 
-				<!-- User Selection Card -->
-				<div class="mb-8 overflow-hidden rounded-lg bg-white shadow">
-					<div class="p-6">
-						<h2 class="text-lg font-semibold text-gray-900 mb-4">Selecionar Funcionário</h2>
-						
-						<div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
-							<!-- User Selection -->
-							<div>
-								<label for="userId" class="block text-sm font-medium text-gray-700">Funcionário</label>
-								<select 
-									id="userId" 
-									name="userId"
-									class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-								>
-									<option value="">Selecione um funcionário</option>
-									for _, member := range members {
-										<option value={ member.UserID.String() }>{ member.Name } ({ member.Email })</option>
-									}
-								</select>
+				<!-- Timesheets List -->
+				if len(timesheets) > 0 {
+					<div class="space-y-4">
+						for _, timesheet := range timesheets {
+							<div class="overflow-hidden rounded-lg bg-white shadow">
+								<div class="border-b border-gray-200 px-4 py-3 sm:px-6">
+									<div class="flex items-center justify-between">
+										<div class="flex items-center gap-3">
+											<div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100">
+												<span class="material-symbols-outlined text-gray-600">person</span>
+											</div>
+											<div>
+												<h3 class="text-base font-semibold text-gray-900">{ timesheet.UserName }</h3>
+												<p class="text-xs text-gray-500">{ timesheet.UserEmail }</p>
+											</div>
+										</div>
+										<span class="text-sm text-gray-500">{ len(timesheet.Entries) } registro(s)</span>
+									</div>
+								</div>
+								
+								if len(timesheet.Entries) > 0 {
+									<ul class="divide-y divide-gray-100">
+										for _, entry := range timesheet.Entries {
+											<li class="px-4 py-4 sm:px-6">
+												<div class="flex items-center gap-3">
+													if entry.TypeID == domain.EntryTypeIn {
+														<div class="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
+															<span class="material-symbols-outlined text-green-600">login</span>
+														</div>
+														<div>
+															<p class="text-sm font-medium text-gray-900">Entrada</p>
+															<p class="text-xs text-gray-500">{ entry.Timestamp.Format("15:04:05") }</p>
+														</div>
+													} else {
+														<div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
+															<span class="material-symbols-outlined text-red-600">logout</span>
+														</div>
+														<div>
+															<p class="text-sm font-medium text-gray-900">Saída</p>
+															<p class="text-xs text-gray-500">{ entry.Timestamp.Format("15:04:05") }</p>
+														</div>
+													}
+												</div>
+											</li>
+										}
+									</ul>
+								} else {
+									<div class="px-4 py-8 text-center">
+										<p class="text-sm text-gray-500">Nenhum registro hoje</p>
+									</div>
+								}
 							</div>
-
-							<!-- Start Date -->
-							<div>
-								<label for="startDate" class="block text-sm font-medium text-gray-700">Data Inicial</label>
-								<input
-									type="date"
-									id="startDate"
-									name="startDate"
-									class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-								/>
-							</div>
-
-							<!-- End Date -->
-							<div>
-								<label for="endDate" class="block text-sm font-medium text-gray-700">Data Final</label>
-								<input
-									type="date"
-									id="endDate"
-									name="endDate"
-									class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-								/>
-							</div>
-						</div>
-
-						<div class="mt-4">
-							<button
-								type="button"
-								onclick="loadTimesheets()"
-								class="inline-flex items-center gap-2 rounded-md bg-[var(--primary-color)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
-							>
-								<span class="material-symbols-outlined text-lg">search</span>
-								Buscar Pontos
-							</button>
-						</div>
+						}
 					</div>
-				</div>
-
-				<!-- Timesheets Container -->
-				<div id="timesheets-container">
+				} else {
 					<div class="rounded-lg bg-white p-12 text-center shadow">
-						<span class="material-symbols-outlined mx-auto text-4xl text-gray-400">event_note</span>
-						<h3 class="mt-2 text-sm font-semibold text-gray-900">Nenhum funcionário selecionado</h3>
-						<p class="mt-1 text-sm text-gray-500">Selecione um funcionário e um período para visualizar os registros de ponto.</p>
+						<span class="material-symbols-outlined mx-auto text-4xl text-gray-400">event_busy</span>
+						<h3 class="mt-2 text-sm font-semibold text-gray-900">Nenhum registro hoje</h3>
+						<p class="mt-1 text-sm text-gray-500">Não há registros de ponto para hoje.</p>
 					</div>
-				</div>
+				}
 			</main>
 		</div>
-
-		<script>
-			// Set default dates (last 30 days)
-			const endDate = new Date();
-			const startDate = new Date();
-			startDate.setDate(startDate.getDate() - 30);
-			
-			document.getElementById('endDate').valueAsDate = endDate;
-			document.getElementById('startDate').valueAsDate = startDate;
-
-			function loadTimesheets() {
-				const userId = document.getElementById('userId').value;
-				const start = document.getElementById('startDate').value;
-				const end = document.getElementById('endDate').value;
-
-				if (!userId) {
-					document.getElementById('timesheets-container').innerHTML = `
-						<div class="rounded-lg bg-white p-12 text-center shadow">
-							<span class="material-symbols-outlined mx-auto text-4xl text-gray-400">person</span>
-							<h3 class="mt-2 text-sm font-semibold text-gray-900">Selecione um funcionário</h3>
-							<p class="mt-1 text-sm text-gray-500">Por favor, selecione um funcionário para visualizar os registros.</p>
-						</div>
-					`;
-					return;
-				}
-
-				// Show loading state
-				document.getElementById('timesheets-container').innerHTML = `
-					<div class="rounded-lg bg-white p-12 text-center shadow">
-						<div class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent"></div>
-						<h3 class="mt-2 text-sm font-semibold text-gray-900">Carregando...</h3>
-					</div>
-				`;
-
-				// Build URL
-				const url = `/api/v1/organizations/${org.ID.String()}/users/${userId}/timesheets?start=${start}&end=${end}`;
-
-				// Fetch timesheets
-				fetch(url, {
-					credentials: 'same-origin'
-				})
-				.then(response => response.json())
-				.then(data => {
-					if (data.data && data.data.length > 0) {
-						renderTimesheets(data.data);
-					} else {
-						document.getElementById('timesheets-container').innerHTML = `
-							<div class="rounded-lg bg-white p-12 text-center shadow">
-								<span class="material-symbols-outlined mx-auto text-4xl text-gray-400">event_busy</span>
-								<h3 class="mt-2 text-sm font-semibold text-gray-900">Nenhum registro encontrado</h3>
-								<p class="mt-1 text-sm text-gray-500">Não há registros de ponto para este funcionário no período selecionado.</p>
-							</div>
-						`;
-					}
-				})
-				.catch(error => {
-					document.getElementById('timesheets-container').innerHTML = `
-						<div class="rounded-lg bg-white p-12 text-center shadow">
-							<span class="material-symbols-outlined mx-auto text-4xl text-red-400">error</span>
-							<h3 class="mt-2 text-sm font-semibold text-gray-900">Erro ao carregar</h3>
-							<p class="mt-1 text-sm text-gray-500">Ocorreu um erro ao buscar os registros. Tente novamente.</p>
-						</div>
-					`;
-				});
-			}
-
-			function renderTimesheets(timesheets) {
-				const container = document.getElementById('timesheets-container');
-				let html = '<div class="space-y-4">';
-
-				timesheets.forEach(timesheet => {
-					const date = new Date(timesheet.date).toLocaleDateString('pt-BR');
-					
-					html += `
-						<div class="overflow-hidden rounded-lg bg-white shadow">
-							<div class="border-b border-gray-200 px-4 py-3 sm:px-6">
-								<div class="flex items-center justify-between">
-									<h3 class="text-base font-semibold text-gray-900">${date}</h3>
-									<span class="text-sm text-gray-500">${timesheet.entries.length} registro(s)</span>
-								</div>
-							</div>
-							<ul class="divide-y divide-gray-100">
-					`;
-
-					if (timesheet.entries && timesheet.entries.length > 0) {
-						timesheet.entries.forEach(entry => {
-							const time = new Date(entry.timestamp).toLocaleTimeString('pt-BR');
-							const isIn = entry.type_id === 1;
-							const icon = isIn ? 'login' : 'logout';
-							const color = isIn ? 'green' : 'red';
-							const type = isIn ? 'Entrada' : 'Saída';
-
-							html += `
-								<li class="px-4 py-4 sm:px-6">
-									<div class="flex items-center gap-3">
-										<div class="flex h-10 w-10 items-center justify-center rounded-full bg-${color}-100">
-											<span class="material-symbols-outlined text-${color}-600">${icon}</span>
-										</div>
-										<div>
-											<p class="text-sm font-medium text-gray-900">${type}</p>
-											<p class="text-xs text-gray-500">${time}</p>
-										</div>
-									</div>
-								</li>
-							`;
-						});
-					} else {
-						html += `
-							<li class="px-4 py-8 text-center">
-								<p class="text-sm text-gray-500">Nenhum registro neste dia</p>
-							</li>
-						`;
-					}
-
-					html += `
-							</ul>
-						</div>
-					`;
-				});
-
-				html += '</div>';
-				container.innerHTML = html;
-			}
-		</script>
 	}
 }

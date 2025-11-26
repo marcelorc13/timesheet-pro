@@ -212,14 +212,14 @@ func OrganizationDetailPage(org domain.Organization, isAdmin bool, userID string
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, " membros</span> <a href=\"")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, " membros</span> <a href=\"/admin/timesheets\" class=\"inline-flex items-center gap-2 rounded-md bg-[var(--primary-color)] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600\">Ver Pontos da Equipe</a> <a href=\"")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var13 templ.SafeURL
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL("/organizations/" + org.ID.String() + "/add-user"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/organization_detail.templ`, Line: 114, Col: 77}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/organization_detail.templ`, Line: 120, Col: 77}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
@@ -242,7 +242,7 @@ func OrganizationDetailPage(org domain.Organization, isAdmin bool, userID string
 						var templ_7745c5c3_Var14 string
 						templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(member.Name)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/organization_detail.templ`, Line: 132, Col: 82}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/organization_detail.templ`, Line: 138, Col: 82}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 						if templ_7745c5c3_Err != nil {
@@ -255,7 +255,7 @@ func OrganizationDetailPage(org domain.Organization, isAdmin bool, userID string
 						var templ_7745c5c3_Var15 string
 						templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(member.Email)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/organization_detail.templ`, Line: 133, Col: 83}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/organization_detail.templ`, Line: 139, Col: 83}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 						if templ_7745c5c3_Err != nil {
@@ -284,7 +284,7 @@ func OrganizationDetailPage(org domain.Organization, isAdmin bool, userID string
 							var templ_7745c5c3_Var16 string
 							templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs("/api/v1/organizations/" + org.ID.String() + "/users/" + member.UserID.String())
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/organization_detail.templ`, Line: 147, Col: 105}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/organization_detail.templ`, Line: 153, Col: 105}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 							if templ_7745c5c3_Err != nil {
@@ -297,7 +297,7 @@ func OrganizationDetailPage(org domain.Organization, isAdmin bool, userID string
 							var templ_7745c5c3_Var17 string
 							templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs("Tem certeza que deseja remover " + member.Name + " da organização?")
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/organization_detail.templ`, Line: 148, Col: 97}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/organization_detail.templ`, Line: 154, Col: 97}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 							if templ_7745c5c3_Err != nil {
@@ -315,7 +315,7 @@ func OrganizationDetailPage(org domain.Organization, isAdmin bool, userID string
 						var templ_7745c5c3_Var18 string
 						templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(member.JoinedAt.Format("02/01/2006"))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/organization_detail.templ`, Line: 157, Col: 60}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/organization_detail.templ`, Line: 163, Col: 60}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 						if templ_7745c5c3_Err != nil {
