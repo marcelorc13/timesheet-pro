@@ -36,7 +36,6 @@ func (r Router) APIRoutes(uh api.UserHandler, oh api.OrganizationHandler, th api
 	organizationRoutes.POST("/:id/users", oh.AddUser)
 	organizationRoutes.DELETE("/:id/users/:userId", oh.RemoveUser)
 
-	// Timesheet routes (under organizations, using :id to match organization routes)
 	organizationRoutes.POST("/:id/clock-in", th.ClockIn)
 	organizationRoutes.GET("/:id/timesheets/me", th.GetMyTimesheets)
 	organizationRoutes.GET("/:id/timesheets/me/status", th.GetMyStatus)
@@ -47,7 +46,7 @@ func (r Router) APIRoutes(uh api.UserHandler, oh api.OrganizationHandler, th api
 	// http://localhost:port/swagger/index.html
 }
 
-func (r Router) ViewsRoutes(ovh views.OrganizationViewHandler, orgRepo *repository.OrganizationRepository) {
+func (r Router) ViewsRoutes(ovh views.OrganizationViewHandler, tvh views.TimesheetViewHandler, orgRepo *repository.OrganizationRepository) {
 	viewsRouter := r.Router.Group("/")
 
 	viewsRouter.GET("/signup", views.SignupHandler)
@@ -65,4 +64,7 @@ func (r Router) ViewsRoutes(ovh views.OrganizationViewHandler, orgRepo *reposito
 	authRoutes.GET("/organizations/:id", ovh.OrganizationDetailHandler)
 	authRoutes.GET("/organizations/:id/edit", ovh.OrganizationEditHandler)
 	authRoutes.GET("/organizations/:id/add-user", ovh.OrganizationAddUserHandler)
+	
+	// Timesheet view routes (authenticated)
+	authRoutes.GET("/timesheet", tvh.TimesheetPageHandler)
 }

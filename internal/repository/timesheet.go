@@ -64,11 +64,12 @@ func (r TimesheetRepository) ClockIn(ctx context.Context, orgID, userID uuid.UUI
 
 		// 5. Inserir a Batida (Entry)
 		const insertEntryQuery = `
-			INSERT INTO timesheet_entries (timesheet_id, timestamp, type_id)
-			VALUES (@sheetID, @timestamp, @type)
+			INSERT INTO timesheet_entries (timesheet_id, organization_id, timestamp, type_id)
+			VALUES (@sheetID, @orgID, @timestamp, @type)
 		`
 		args := pgx.StrictNamedArgs{
 			"sheetID":   timesheetID,
+			"orgID":   orgID,
 			"timestamp": now,
 			"type":      nextType,
 		}

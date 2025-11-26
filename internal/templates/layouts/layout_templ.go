@@ -47,7 +47,7 @@ func Base(title string, userName string) templ.Component {
 			return templ_7745c5c3_Err
 		}
 		if userName != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"bg-white shadow\"><div class=\"mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8\"><div class=\"flex items-center justify-between\"><div class=\"flex items-center gap-3\"><span class=\"material-symbols-outlined text-3xl text-[var(--primary-color)]\">pending_actions</span><h1 class=\"text-2xl font-bold text-gray-900\">TimeSheet PRO</h1></div><div class=\"flex items-center gap-4\"><span class=\"text-sm text-gray-700\">Olá, <span class=\"font-semibold\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<header class=\"bg-white shadow\"><div class=\"mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8\"><div class=\"flex items-center justify-between\"><a href=\"/\" class=\"flex items-center gap-3\"><span class=\"material-symbols-outlined text-3xl text-[var(--primary-color)]\">pending_actions</span><h1 class=\"text-2xl font-bold text-gray-900\">TimeSheet PRO</h1></a><div class=\"flex items-center gap-4\"><span class=\"text-sm text-gray-700\">Olá, <span class=\"font-semibold\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

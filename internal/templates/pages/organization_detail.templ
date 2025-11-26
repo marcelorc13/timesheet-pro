@@ -38,6 +38,13 @@ templ OrganizationDetailPage(org domain.Organization, isAdmin bool, userID strin
 							</div>
 						</div>
 						<div class="flex gap-2">
+							<a
+								href="/timesheet"
+								class="inline-flex items-center gap-2 rounded-md bg-[var(--primary-color)] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+							>
+								<span class="material-symbols-outlined text-lg">schedule</span>
+								Ponto Eletrônico
+							</a>
 							if isAdmin {
 								<a
 									href={ templ.URL("/organizations/" + org.ID.String() + "/edit") }

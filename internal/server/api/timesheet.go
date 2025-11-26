@@ -59,6 +59,9 @@ func (h *TimesheetHandler) ClockIn(c *gin.Context) {
 	// Call service
 	err = h.service.ClockIn(c.Request.Context(), userID, orgID)
 	if err != nil {
+		// Log the error for debugging
+		println("ClockIn error:", err.Error())
+		
 		if err.Error() == "usuário não é membro desta organização" {
 			c.JSON(http.StatusForbidden, domain.HttpResponse{Status: http.StatusForbidden, Message: err.Error()})
 			return

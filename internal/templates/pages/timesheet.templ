@@ -1,0 +1,131 @@
+package pages
+
+import (
+	"github.com/marcelorc13/timesheet-pro/internal/templates/layouts"
+	"github.com/marcelorc13/timesheet-pro/internal/domain"
+	"fmt"
+)
+
+templ TimesheetPage(org domain.Organization, timesheet *domain.UserTimesheet, status string, lastTimestamp *string, userName string) {
+	@layouts.Base("Ponto Eletrônico - " + org.Name, userName) {
+		<div class="min-h-screen bg-gray-50">
+			<main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+				<!-- Header -->
+					<a href="/" class="inline-flex items-center text-sm text-gray-600 hover:text-gray-900">
+						<span class="material-symbols-outlined text-lg">arrow_back</span>
+						<span class="ml-1">Voltar</span>
+					</a>
+				<div class="mb-8">
+					<h1 class="text-3xl font-bold text-gray-900">Ponto Eletrônico</h1>
+					<p class="mt-2 text-sm text-gray-600">{ org.Name }</p>
+				</div>
+
+				<!-- Clock In/Out Card -->
+				<div class="mb-8 overflow-hidden rounded-lg bg-white shadow">
+					<div class="p-6">
+						<div class="flex items-center justify-between">
+							<div>
+								<h2 class="text-lg font-semibold text-gray-900">Status Atual</h2>
+								if status == "in" {
+									<div class="mt-2 flex items-center gap-2">
+										<span class="material-symbols-outlined text-green-600">schedule</span>
+										<span class="text-sm font-medium text-green-600">Trabalhando</span>
+									</div>
+									if lastTimestamp != nil {
+										<p class="mt-1 text-xs text-gray-500">Último registro: { *lastTimestamp }</p>
+									}
+								} else {
+									<div class="mt-2 flex items-center gap-2">
+										<span class="material-symbols-outlined text-gray-400">schedule</span>
+										<span class="text-sm font-medium text-gray-600">Fora do expediente</span>
+									</div>
+									if lastTimestamp != nil {
+										<p class="mt-1 text-xs text-gray-500">Último registro: { *lastTimestamp }</p>
+									}
+								}
+							</div>
+							<button
+								hx-post={ "/api/v1/organizations/" + org.ID.String() + "/clock-in" }
+								hx-swap="none"
+								hx-on::after-request="location.reload()"
+								class="inline-flex items-center gap-2 rounded-md bg-[var(--primary-color)] px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+							>
+								<span class="material-symbols-outlined text-lg">schedule</span>
+								if status == "in" {
+									Registrar Saída
+								} else {
+									Registrar Entrada
+								}
+							</button>
+						</div>
+					</div>
+				</div>
+
+				<!-- Today's Timesheet -->
+				if timesheet != nil {
+					<div class="overflow-hidden rounded-lg bg-white shadow">
+						<div class="border-b border-gray-200 px-4 py-5 sm:px-6">
+							<h3 class="text-base font-semibold leading-6 text-gray-900">Registros de Hoje</h3>
+							<p class="mt-1 text-sm text-gray-500">{ timesheet.Date.Format("02/01/2006") }</p>
+						</div>
+						
+						if len(timesheet.Entries) > 0 {
+							<ul role="list" class="divide-y divide-gray-100">
+								for _, entry := range timesheet.Entries {
+									<li class="px-4 py-4 sm:px-6">
+										<div class="flex items-center justify-between">
+											<div class="flex items-center gap-3">
+												if entry.TypeID == domain.EntryTypeIn {
+													<div class="flex h-10 w-10 items-center justify-center rounded-full bg-green-100">
+														<span class="material-symbols-outlined text-green-600">login</span>
+													</div>
+													<div>
+														<p class="text-sm font-medium text-gray-900">Entrada</p>
+														<p class="text-xs text-gray-500">{ entry.Timestamp.Format("15:04:05") }</p>
+													</div>
+												} else {
+													<div class="flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
+														<span class="material-symbols-outlined text-red-600">logout</span>
+													</div>
+													<div>
+														<p class="text-sm font-medium text-gray-900">Saída</p>
+														<p class="text-xs text-gray-500">{ entry.Timestamp.Format("15:04:05") }</p>
+													</div>
+												}
+											</div>
+											<span class="text-xs text-gray-400">{ entry.Timestamp.Format("02/01/2006 15:04") }</span>
+										</div>
+									</li>
+								}
+							</ul>
+							
+							<!-- Total Time -->
+							<div class="bg-gray-50 px-4 py-4 sm:px-6">
+								<div class="flex items-center justify-between">
+									<span class="text-sm font-medium text-gray-900">Tempo Total</span>
+									<span class="text-sm text-gray-600">
+										{ fmt.Sprintf("%d:%02d horas", timesheet.TotalMinutes/60, timesheet.TotalMinutes%60) }
+									</span>
+								</div>
+							</div>
+						} else {
+							<div class="px-4 py-12 text-center sm:px-6">
+								<span class="material-symbols-outlined mx-auto text-4xl text-gray-400">event_busy</span>
+								<h3 class="mt-2 text-sm font-semibold text-gray-900">Nenhum registro hoje</h3>
+								<p class="mt-1 text-sm text-gray-500">Registre sua entrada para começar.</p>
+							</div>
+						}
+					</div>
+				} else {
+					<div class="overflow-hidden rounded-lg bg-white shadow">
+						<div class="px-4 py-12 text-center sm:px-6">
+							<span class="material-symbols-outlined mx-auto text-4xl text-gray-400">event_busy</span>
+							<h3 class="mt-2 text-sm font-semibold text-gray-900">Nenhum registro hoje</h3>
+							<p class="mt-1 text-sm text-gray-500">Registre sua entrada para começar.</p>
+						</div>
+					</div>
+				}
+			</main>
+		</div>
+	}
+}
