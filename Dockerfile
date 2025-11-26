@@ -7,23 +7,22 @@ RUN apk add --no-cache git make
 # Set working directory
 WORKDIR /app
 
-# Copy go mod files
+# Copy go mod and go.sum files for dependency caching
 COPY go.mod go.sum ./
 
-# Download dependencies
+# Download dependencies (will be cached if go.mod/go.sum don't change)
 RUN go mod download
 
 # Copy the entire project
 COPY . .
 
-# Generate templ templates
-RUN go install github.com/a-h/templ/cmd/templ@latest && \
-    templ generate
+# Generate templ templates using go tool (matching Makefile)
+RUN go tool templ generate
 
-# Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./cmd/api/main.go
+# Build the application with optimizations
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags="-s -w" -o main ./cmd/api/main.go
 
-# Final stage
+# Final stage - minimal production image
 FROM alpine:latest
 
 # Install ca-certificates for HTTPS requests
