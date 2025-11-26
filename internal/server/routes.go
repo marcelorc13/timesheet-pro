@@ -61,13 +61,11 @@ func (r Router) ViewsRoutes(ovh views.OrganizationViewHandler, tvh views.Timeshe
 		views.HomeHandler(c, *orgRepo)
 	})
 	
-	// Organization view routes (authenticated) - list page removed
 	authRoutes.GET("/organizations/new", ovh.OrganizationCreateHandler)
 	authRoutes.GET("/organizations/:id", ovh.OrganizationDetailHandler)
 	authRoutes.GET("/organizations/:id/edit", ovh.OrganizationEditHandler)
 	authRoutes.GET("/organizations/:id/add-user", ovh.OrganizationAddUserHandler)
 	
-	// Timesheet view routes (authenticated)
 	authRoutes.GET("/timesheet", tvh.TimesheetPageHandler)
 
 	authRoutes.GET("/profile", pvh.ProfilePageHandler)
