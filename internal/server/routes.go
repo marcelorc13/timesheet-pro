@@ -44,6 +44,9 @@ func (r Router) APIRoutes(uh api.UserHandler, oh api.OrganizationHandler, th api
 	organizationRoutes.GET("/:id/users/:userId/timesheets", th.GetUserTimesheets)
 	organizationRoutes.GET("/:id/timesheets/all", th.GetAllTimesheets)
 
+	// Timesheet by ID route (not scoped to organization)
+	apiRouter.GET("/timesheets/:id", th.GetTimesheetByID)
+
 	r.Router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	// http://localhost:port/swagger/index.html
 }

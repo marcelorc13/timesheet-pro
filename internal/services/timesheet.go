@@ -171,7 +171,111 @@ func (s *TimesheetService) GetOrganizationTimesheets(ctx context.Context, adminU
 		return nil, fmt.Errorf("apenas administradores podem visualizar timesheets da organização")
 	}
 
-	// TODO: Implement GetOrganizationTimesheets repository method
-	// For now, return empty slice
-	return []domain.UserTimesheet{}, fmt.Errorf("método não implementado ainda")
+	// Get organization timesheets from repository
+	res, err := s.timesheetRepo.GetOrganizationTimesheets(ctx, orgID, date)
+	if err != nil {
+		return nil, err
+	}
+
+	if !res.Success {
+		return nil, fmt.Errorf("%s", res.Message)
+	}
+
+	timesheets, ok := res.Data.([]domain.UserTimesheet)
+	if !ok {
+		return nil, fmt.Errorf("erro ao converter dados dos timesheets")
+	}
+
+	return timesheets, nil
+}
+
+// GetTimesheetByID retrieves a single timesheet by its ID
+func (s *TimesheetService) GetTimesheetByID(ctx context.Context, requestingUserID, timesheetID uuid.UUID) (*domain.UserTimesheet, error) {
+	// Get timesheet from repository
+	res, err := s.timesheetRepo.GetTimesheetByID(ctx, timesheetID)
+	if err != nil {
+		return nil, err
+	}
+
+	if !res.Success {
+		return nil, fmt.Errorf("%s", res.Message)
+	}
+
+	timesheet, ok := res.Data.(domain.UserTimesheet)
+	if !ok {
+		return nil, fmt.Errorf("erro ao converter dados do timesheet")
+	}
+
+	// Verify user has permission to view this timesheet
+	// Either they own it, or they're an admin in the organization
+	if timesheet.UserID != requestingUserID {
+		// Check if requesting user is admin
+		adminRes, err := s.orgRepo.IsUserAdmin(ctx, requestingUserID, timesheet.OrganizationID)
+		if err != nil {
+			return nil, err
+		}
+
+		if !adminRes.Success {
+			return nil, fmt.Errorf("%s", adminRes.Message)
+		}
+
+		isAdmin, ok := adminRes.Data.(bool)
+		if !ok || !isAdmin {
+			return nil, fmt.Errorf("você não tem permissão para visualizar este timesheet")
+		}
+	}
+
+	return &timesheet, nil
+}
+
+// GetUserTimesheets retrieves all timesheets for a user within a date range
+func (s *TimesheetService) GetUserTimesheets(ctx context.Context, requestingUserID, targetUserID, orgID uuid.UUID, startDate, endDate time.Time) ([]domain.UserTimesheet, error) {
+	// Verify requesting user is member of the organization
+	memberRes, err := s.orgRepo.IsUserInOrganization(ctx, requestingUserID, orgID)
+	if err != nil {
+		return nil, err
+	}
+
+	if !memberRes.Success {
+		return nil, fmt.Errorf("%s", memberRes.Message)
+	}
+
+	isMember, ok := memberRes.Data.(bool)
+	if !ok || !isMember {
+		return nil, fmt.Errorf("usuário não é membro desta organização")
+	}
+
+	// If requesting user is not the target user, check if they're an admin
+	if requestingUserID != targetUserID {
+		adminRes, err := s.orgRepo.IsUserAdmin(ctx, requestingUserID, orgID)
+		if err != nil {
+			return nil, err
+		}
+
+		if !adminRes.Success {
+			return nil, fmt.Errorf("%s", adminRes.Message)
+		}
+
+		isAdmin, ok := adminRes.Data.(bool)
+		if !ok || !isAdmin {
+			return nil, fmt.Errorf("apenas administradores podem visualizar timesheets de outros usuários")
+		}
+	}
+
+	// Get timesheets from repository
+	res, err := s.timesheetRepo.GetUserTimesheets(ctx, targetUserID, orgID, startDate, endDate)
+	if err != nil {
+		return nil, err
+	}
+
+	if !res.Success {
+		return nil, fmt.Errorf("%s", res.Message)
+	}
+
+	timesheets, ok := res.Data.([]domain.UserTimesheet)
+	if !ok {
+		return nil, fmt.Errorf("erro ao converter dados dos timesheets")
+	}
+
+	return timesheets, nil
 }

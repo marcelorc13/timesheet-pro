@@ -9,7 +9,6 @@ import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
 import (
-	"fmt"
 	"github.com/marcelorc13/timesheet-pro/internal/domain"
 	"github.com/marcelorc13/timesheet-pro/internal/templates/layouts"
 )
@@ -54,7 +53,7 @@ func TimesheetPage(org domain.Organization, timesheet *domain.UserTimesheet, sta
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(org.Name)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/timesheet.templ`, Line: 20, Col: 53}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/timesheet.templ`, Line: 19, Col: 53}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -77,7 +76,7 @@ func TimesheetPage(org domain.Organization, timesheet *domain.UserTimesheet, sta
 					var templ_7745c5c3_Var4 string
 					templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(*lastTimestamp)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/timesheet.templ`, Line: 35, Col: 82}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/timesheet.templ`, Line: 34, Col: 82}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 					if templ_7745c5c3_Err != nil {
@@ -101,7 +100,7 @@ func TimesheetPage(org domain.Organization, timesheet *domain.UserTimesheet, sta
 					var templ_7745c5c3_Var5 string
 					templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(*lastTimestamp)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/timesheet.templ`, Line: 43, Col: 82}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/timesheet.templ`, Line: 42, Col: 82}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 					if templ_7745c5c3_Err != nil {
@@ -120,7 +119,7 @@ func TimesheetPage(org domain.Organization, timesheet *domain.UserTimesheet, sta
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs("/api/v1/organizations/" + org.ID.String() + "/clock-in")
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/timesheet.templ`, Line: 48, Col: 74}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/timesheet.templ`, Line: 47, Col: 74}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 			if templ_7745c5c3_Err != nil {
@@ -153,7 +152,7 @@ func TimesheetPage(org domain.Organization, timesheet *domain.UserTimesheet, sta
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(timesheet.Date.Format("02/01/2006"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/timesheet.templ`, Line: 69, Col: 82}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/timesheet.templ`, Line: 68, Col: 82}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
@@ -181,7 +180,7 @@ func TimesheetPage(org domain.Organization, timesheet *domain.UserTimesheet, sta
 							var templ_7745c5c3_Var8 string
 							templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinStringErrs(entry.Timestamp.Format("15:04:05"))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/timesheet.templ`, Line: 84, Col: 83}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/timesheet.templ`, Line: 83, Col: 83}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 							if templ_7745c5c3_Err != nil {
@@ -199,7 +198,7 @@ func TimesheetPage(org domain.Organization, timesheet *domain.UserTimesheet, sta
 							var templ_7745c5c3_Var9 string
 							templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(entry.Timestamp.Format("15:04:05"))
 							if templ_7745c5c3_Err != nil {
-								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/timesheet.templ`, Line: 92, Col: 83}
+								return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/timesheet.templ`, Line: 91, Col: 83}
 							}
 							_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 							if templ_7745c5c3_Err != nil {
@@ -217,7 +216,7 @@ func TimesheetPage(org domain.Organization, timesheet *domain.UserTimesheet, sta
 						var templ_7745c5c3_Var10 string
 						templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(entry.Timestamp.Format("02/01/2006 15:04"))
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/timesheet.templ`, Line: 96, Col: 91}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/timesheet.templ`, Line: 95, Col: 91}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 						if templ_7745c5c3_Err != nil {
@@ -228,40 +227,27 @@ func TimesheetPage(org domain.Organization, timesheet *domain.UserTimesheet, sta
 							return templ_7745c5c3_Err
 						}
 					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</ul><!-- Total Time --> <div class=\"bg-gray-50 px-4 py-4 sm:px-6\"><div class=\"flex items-center justify-between\"><span class=\"text-sm font-medium text-gray-900\">Tempo Total</span> <span class=\"text-sm text-gray-600\">")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					var templ_7745c5c3_Var11 string
-					templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d:%02d horas", timesheet.TotalMinutes/60, timesheet.TotalMinutes%60))
-					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/timesheet.templ`, Line: 107, Col: 94}
-					}
-					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "</span></div></div>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "</ul>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				} else {
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<div class=\"px-4 py-12 text-center sm:px-6\"><span class=\"material-symbols-outlined mx-auto text-4xl text-gray-400\">event_busy</span><h3 class=\"mt-2 text-sm font-semibold text-gray-900\">Nenhum registro hoje</h3><p class=\"mt-1 text-sm text-gray-500\">Registre sua entrada para começar.</p></div>")
+					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<div class=\"px-4 py-12 text-center sm:px-6\"><span class=\"material-symbols-outlined mx-auto text-4xl text-gray-400\">event_busy</span><h3 class=\"mt-2 text-sm font-semibold text-gray-900\">Nenhum registro hoje</h3><p class=\"mt-1 text-sm text-gray-500\">Registre sua entrada para começar.</p></div>")
 					if templ_7745c5c3_Err != nil {
 						return templ_7745c5c3_Err
 					}
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<div class=\"overflow-hidden rounded-lg bg-white shadow\"><div class=\"px-4 py-12 text-center sm:px-6\"><span class=\"material-symbols-outlined mx-auto text-4xl text-gray-400\">event_busy</span><h3 class=\"mt-2 text-sm font-semibold text-gray-900\">Nenhum registro hoje</h3><p class=\"mt-1 text-sm text-gray-500\">Registre sua entrada para começar.</p></div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<div class=\"overflow-hidden rounded-lg bg-white shadow\"><div class=\"px-4 py-12 text-center sm:px-6\"><span class=\"material-symbols-outlined mx-auto text-4xl text-gray-400\">event_busy</span><h3 class=\"mt-2 text-sm font-semibold text-gray-900\">Nenhum registro hoje</h3><p class=\"mt-1 text-sm text-gray-500\">Registre sua entrada para começar.</p></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "</main></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "</main></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
