@@ -70,6 +70,7 @@ func (r Router) ViewsRoutes(ovh views.OrganizationViewHandler, tvh views.Timeshe
 	authRoutes.GET("/organizations/:id/add-user", ovh.OrganizationAddUserHandler)
 	
 	authRoutes.GET("/timesheet", tvh.TimesheetPageHandler)
+	authRoutes.GET("/admin/timesheets", tvh.AdminTimesheetPageHandler)
 
 	authRoutes.GET("/profile", pvh.ProfilePageHandler)
 }

@@ -18,6 +18,9 @@ func NewRouter(r *gin.Engine) *Router {
 
 func (r Router) Start() {
 	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
 
-	http.ListenAndServe(port, r.Router)
+	http.ListenAndServe(":"+port, r.Router)
 }

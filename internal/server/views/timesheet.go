@@ -80,3 +80,60 @@ func (h *TimesheetViewHandler) TimesheetPageHandler(c *gin.Context) {
 
 	utils.Render(c.Request.Context(), c.Writer, pages.TimesheetPage(*org, timesheet, status, lastTimestampStr, userName))
 }
+
+// AdminTimesheetPageHandler shows admin view of all user timesheets
+func (h *TimesheetViewHandler) AdminTimesheetPageHandler(c *gin.Context) {
+	// Get user ID from JWT token
+	tokenString, err := c.Cookie("token")
+	if err != nil {
+		c.Redirect(http.StatusSeeOther, "/login")
+		return
+	}
+
+	claims, err := utils.GetTokenClaims(tokenString)
+	if err != nil {
+		c.Redirect(http.StatusSeeOther, "/login")
+		return
+	}
+
+	userIDStr, ok := claims["id"].(string)
+	if !ok {
+		c.Redirect(http.StatusSeeOther, "/login")
+		return
+	}
+
+	userID, err := uuid.Parse(userIDStr)
+	if err != nil {
+		c.Redirect(http.StatusSeeOther, "/login")
+		return
+	}
+
+	// Get user name
+	userName, ok := claims["name"].(string)
+	if !ok {
+		userName = ""
+	}
+
+	// Get user's organization
+	org, err := h.orgServ.GetOrganizationByUserID(c.Request.Context(), userID)
+	if err != nil || org == nil {
+		c.String(http.StatusNotFound, "Você não pertence a nenhuma organização")
+		return
+	}
+
+	// Check if user is admin
+	isAdmin, err := h.orgServ.IsUserAdmin(c.Request.Context(), userID, org.ID)
+	if err != nil || !isAdmin {
+		c.String(http.StatusForbidden, "Apenas administradores podem acessar esta página")
+		return
+	}
+
+	// Get all members of the organization
+	members, err := h.orgServ.GetMembers(c.Request.Context(), org.ID)
+	if err != nil {
+		c.String(http.StatusInternalServerError, "Erro ao buscar membros")
+		return
+	}
+
+	utils.Render(c.Request.Context(), c.Writer, pages.AdminTimesheetPage(*org, *members, userName))
+}
